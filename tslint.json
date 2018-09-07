@@ -1,19 +1,31 @@
 {
-  "extends": "tslint-config-airbnb",
+  "extends": "tslint:recommended",
   "rules": {
     "align": false,
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
+    "max-classes-per-file": false,
     "max-line-length": [
       true,
       140
     ],
+    "member-access": false,
     "no-floating-promises": true,
     "no-increment-decrement": false,
+    "object-literal-sort-keys": false,
     "object-shorthand-properties-first": false,
     "semicolon": [
       true,
-      "never"
+      "always"
     ],
     "trailing-comma": false,
+    "quotemark": [
+      true,
+      "single",
+      "jsx-double"
+    ],
     "variable-name": [
       true,
       "ban-keywords",
