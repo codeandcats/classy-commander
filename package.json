@@ -1,7 +1,7 @@
 {
-  "name": "typed-commander",
+  "name": "classy-commander",
   "version": "1.0.0",
-  "description": "A modular way of declaring Commander commands in TypeScript",
+  "description": "A wrapper for Commander that lets you declare commands as classes",
   "main": "index.js",
   "scripts": {
     "build": "tsc -p ./",
