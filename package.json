@@ -4,7 +4,10 @@
   "description": "A modular way of declaring Commander commands in TypeScript",
   "main": "index.js",
   "scripts": {
+    "build": "tsc -p ./",
+    "clean": "rimraf ./dist",
     "commit": "commit",
+    "prebuild": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ben <codeandcats@gmail.com>",
@@ -17,6 +20,8 @@
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
-    "@commitlint/prompt-cli": "^7.1.2"
+    "@commitlint/prompt-cli": "^7.1.2",
+    "rimraf": "^2.6.2",
+    "typescript": "^3.0.3"
   }
 }
