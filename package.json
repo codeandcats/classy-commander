@@ -14,6 +14,10 @@
     "prebuild": "npm run clean",
     "prepackage": "npm run build",
     "package": "ts-node ./support/package.ts",
+    "prerelease": "npm run package",
+    "release": "git checkout master && git pull origin master && standard-version",
+    "preship-it": "npm run release",
+    "ship-it": "git push --follow-tags origin master && cd ./dist && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
@@ -31,6 +35,7 @@
     "@types/app-root-path": "^1.2.4",
     "@types/fs-extra": "^5.0.4",
     "rimraf": "^2.6.2",
+    "standard-version": "^4.4.0",
     "ts-loader": "^5.0.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
