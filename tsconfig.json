@@ -1,12 +1,21 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2015"
+    ],
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "skipLibCheck": true,
     "strict": true
   },
   "files": [
     "./src/index.ts"
+  ],
+  "exclude": [
+    "./node_modules"
   ]
 }
