@@ -22,7 +22,7 @@
   },
   "private": true,
   "author": "Ben <codeandcats@gmail.com>",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
