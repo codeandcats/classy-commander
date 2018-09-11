@@ -8,7 +8,7 @@
     "clean": "rimraf ./dist",
     "commit": "commit",
     "preexample": "npm run package",
-    "example": "ts-node ./example/cli.ts",
+    "example": "ts-node ./example",
     "lint": "tslint -p ./tsconfig.json",
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "npm run clean",
@@ -55,6 +55,7 @@
   "dependencies": {
     "app-root-path": "^2.1.0",
     "chalk": "^2.4.1",
+    "commander": "^2.18.0",
     "fs-extra": "^7.0.0",
     "reflect-metadata": "^0.1.12"
   }
