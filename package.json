@@ -1,7 +1,7 @@
 {
   "name": "classy-commander",
   "version": "1.0.0",
-  "description": "A wrapper for Commander that lets you declare commands as classes",
+  "description": "A TypeScript wrapper for Commander that lets you easily declare commands using classes & decorators and provides strongly typed arguments.",
   "main": "index.js",
   "scripts": {
     "build": "tsc -p ./",
