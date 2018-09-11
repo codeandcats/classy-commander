@@ -1,5 +1,17 @@
 # classy-commander
-A wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides strongly typed arguments.
+A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides strongly typed arguments.
+
+
+## Features
+- Write commands as modular classes that can be easily tested
+- Specify command usage via a class with decorators
+- Command values
+- Optional values
+- Options
+- Options with values
+- Coercion
+- Version from package.json
+- Support for Inversion of Control containers like [Inversify](http://inversify.io/)
 
 
 ## Install
