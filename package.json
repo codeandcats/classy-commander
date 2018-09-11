@@ -23,6 +23,17 @@
   "private": true,
   "author": "Ben <codeandcats@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "commander",
+    "cli",
+    "class",
+    "decorators",
+    "ioc",
+    "typescript",
+    "typed",
+    "command",
+    "command line"
+  ],
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
