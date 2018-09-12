@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { CommandOptionDefinition, CommandOptionDefinitionOptions, CommandValueDefinition } from './types';
 
-const metadataKeys = Object.freeze({
+export const metadataKeys = Object.freeze({
   command: Symbol('command'),
   options: Symbol('options'),
   values: Symbol('values')

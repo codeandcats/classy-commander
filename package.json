@@ -16,7 +16,7 @@
     "prerelease": "npm run package",
     "release": "git checkout master && git pull origin master && standard-version",
     "ship-it": "git push --follow-tags origin master && cd ./dist && npm publish",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "private": true,
   "author": "Ben <codeandcats@gmail.com>",
@@ -43,8 +43,11 @@
     "@commitlint/prompt-cli": "^7.1.2",
     "@types/app-root-path": "^1.2.4",
     "@types/fs-extra": "^5.0.4",
+    "@types/jest": "^23.3.2",
+    "jest": "^23.6.0",
     "rimraf": "^2.6.2",
     "standard-version": "^4.4.0",
+    "ts-jest": "^23.1.4",
     "ts-loader": "^5.0.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
