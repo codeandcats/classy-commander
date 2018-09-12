@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "extends": "../tsconfig.json",
+  "files": [
+    "./index.ts"
+  ]
+}
