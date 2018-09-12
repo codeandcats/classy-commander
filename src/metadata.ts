@@ -1,14 +1,12 @@
 import 'reflect-metadata';
 
-import { CommandDefinition, CommandOptionDefinition, CommandOptionDefinitionOptions, CommandValueDefinition } from './types';
+import { CommandOptionDefinition, CommandOptionDefinitionOptions, CommandValueDefinition } from './types';
 
 const metadataKeys = Object.freeze({
   command: Symbol('command'),
   options: Symbol('options'),
   values: Symbol('values')
 });
-
-const commandDefinitions: Array<CommandDefinition<any>> = [];
 
 export function getCommandValues(paramsClassPrototype: any): CommandValueDefinition[] {
   return [...(Reflect.getOwnMetadata(metadataKeys.values, paramsClassPrototype) || [])];
@@ -35,12 +33,4 @@ export function addCommandOption(paramsClassPrototype: any, name: string, option
     ...options
   });
   Reflect.defineMetadata(metadataKeys.options, allOptions, paramsClassPrototype);
-}
-
-export function addCommand(command: CommandDefinition<any>) {
-  commandDefinitions.push(command);
-}
-
-export function getCommands(): Array<CommandDefinition<any>> {
-  return [...commandDefinitions];
 }

@@ -1,5 +1,6 @@
-import { Commander } from './commander';
-import { IocContainer } from './types';
+import { Commander } from './classy';
+import { getCommandUsage } from './commander';
+import { CommandClass, IocContainer } from './types';
 
 export { command, option, value } from './decorators';
 export { Command, CommandValueDefinition, CommandOptionDefinition, CommandOptionDefinitionOptions, IocContainer } from './types';
@@ -17,4 +18,8 @@ export function ioc(container: IocContainer): Commander {
 
 export async function execute(argv?: string[]): Promise<void> {
   return commander.execute(argv);
+}
+
+export function getCommandUsageString(commandClass: CommandClass<any>) {
+  return getCommandUsage(commandClass);
 }

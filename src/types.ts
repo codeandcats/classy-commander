@@ -18,15 +18,23 @@ export interface CommandOptionDefinitionOptions {
   valueName?: string;
 }
 
-export interface CommandDefinition<TCommand> {
+export interface CommandDefinition<TParams> {
   name: string;
-  type: { new(...args: any[]): TCommand };
-  paramsClass: { new(): any };
-  description?: string;
+  description: string | undefined;
+  type: CommandClass<TParams>;
+  paramsClass: CommandParamsClass<TParams>;
 }
 
 export interface Command<TParams> {
   execute(params: TParams): Promise<void>;
+}
+
+export interface CommandParamsClass<T> {
+  new(): T;
+}
+
+export interface CommandClass<TParams> {
+  new(...args: any[]): Command<TParams>;
 }
 
 export interface IocContainer {

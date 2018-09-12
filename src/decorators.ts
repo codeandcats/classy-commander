@@ -1,8 +1,21 @@
+import { registerCommand } from './commander';
 import * as meta from './metadata';
-import { CommandOptionDefinitionOptions } from './types';
+import { CommandClass, CommandOptionDefinitionOptions } from './types';
+import { CommandParamsClass } from './types';
 
-export const command = (name: string, paramsClass: { new(): {} }, description?: string) => (target: any) => {
-  meta.addCommand({ name, type: target, paramsClass, description });
+export const command = <TParams>(
+  name: string,
+  paramsClass: CommandParamsClass<TParams>,
+  description?: string
+) => {
+  return (target: CommandClass<TParams>) => {
+    registerCommand({
+      name,
+      description,
+      type: target,
+      paramsClass,
+    });
+  };
 };
 
 export const option = (options?: CommandOptionDefinitionOptions) => ((target: any, name: string) => {
