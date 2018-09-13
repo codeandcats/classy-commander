@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import * as cli from 'commander';
 import { getCommandOptions, getCommandValues } from './metadata';
-import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, CommandValueDefinition, IocContainer } from './types';
+import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, IocContainer } from './types';
 
 let iocContainer: IocContainer | undefined;
 
@@ -11,17 +11,21 @@ export function setIocContainer(container: IocContainer) {
   iocContainer = container;
 }
 
+export function getIocContainer(): IocContainer | undefined {
+  return iocContainer;
+}
+
 function getOptionUsage(option: CommandOptionDefinition): string {
   let result = '';
 
   if (option.shortName) {
-    result = `-${option.shortName}`;
+    result = `-${option.shortName}, `;
   }
 
-  result += ` --${option.name.toString()}`;
+  result += `--${option.name.toString()} `;
 
   if (option.valueName) {
-    result += ` <${option.valueName}>`;
+    result += `<${option.valueName}>`;
   }
 
   return result.trim();
@@ -42,10 +46,10 @@ function getParams(
   }
 
   const optionValues = args[paramIndex];
-  for (const option of options) {
-    params[option.name.toString()] = optionValues[option.name];
-    if (option.shortName) {
-      params[option.shortName] = optionValues[option.shortName];
+
+  if (optionValues) {
+    for (const option of options) {
+      params[option.name.toString()] = optionValues[option.name];
     }
   }
 

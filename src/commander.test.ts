@@ -1,0 +1,161 @@
+import chalk from 'chalk';
+import * as commander from 'commander';
+import { getCommandUsage, getIocContainer, registerCommand, setIocContainer } from './commander';
+import { option, value } from './decorators';
+import { Command, CommandDefinition, IocContainer } from './types';
+
+jest.mock('commander');
+
+const noop = () => {
+  //
+};
+
+// TODO: Fix decorator warnings
+
+describe('src/commander', () => {
+  let loginHandler: (params: LoginCommandParams) => void | undefined;
+
+  class LoginCommandParams {
+    @value()
+    username: string = '';
+
+    @value({ optional: true })
+    password?: string;
+
+    @option({ shortName: 'r', description: 'Keeps user session alive for number of days', valueName: 'days' })
+    rememberMeFor?: number = 7;
+
+    @option({ valueName: 'code' })
+    mfaCode?: string;
+
+    @option({ valueName: 'pin' })
+    pin?: number;
+
+    @option()
+    sudo?: boolean;
+  }
+
+  class LoginCommand implements Command<LoginCommandParams> {
+    async execute(params: LoginCommandParams) {
+      loginHandler(params);
+    }
+  }
+
+  beforeEach(() => {
+    loginHandler = jest.fn();
+    jest.spyOn(process, 'exit').mockImplementation(noop);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('setIocContainer', () => {
+    afterEach(() => setIocContainer(undefined));
+
+    it('should set the ioc container to use when instantiating commands', () => {
+      const container: IocContainer = { get: () => null };
+      setIocContainer(container);
+      expect(getIocContainer()).toEqual(container);
+    });
+  });
+
+  describe('registerCommand', () => {
+    let command: CommandDefinition<any>;
+    let commanderCommandMock: Partial<ReturnType<typeof commander['command']>>;
+    let action: (...args: any[]) => void | undefined;
+
+    beforeEach(() => {
+      command = {
+        name: 'login',
+        description: 'Logs user in',
+        paramsClass: LoginCommandParams,
+        type: LoginCommand
+      };
+
+      commanderCommandMock = {
+        action: jest.fn().mockImplementation((a) => action = a),
+        description: jest.fn(),
+        option: jest.fn()
+      };
+
+      jest.spyOn(commander, 'command').mockReturnValue(commanderCommandMock);
+
+      registerCommand(command);
+    });
+
+    it('should register a command with commander', () => {
+      expect(commander.command).toHaveBeenCalledWith('login <username> [password]');
+
+      expect(commanderCommandMock.description).toHaveBeenCalledWith('Logs user in');
+
+      expect(commanderCommandMock.action).toHaveBeenCalledWith(expect.any(Function));
+
+      expect(commanderCommandMock.option).toHaveBeenCalledWith(
+        '-r, --rememberMeFor <days>',
+        'Keeps user session alive for number of days',
+        expect.any(Function),
+        7
+      );
+
+      expect(commanderCommandMock.option).toHaveBeenCalledWith(
+        '--mfaCode <code>',
+        undefined,
+        expect.any(Function),
+        undefined
+      );
+
+      const coerceRememberMeFor = (commanderCommandMock.option as jest.Mock<{}>).mock.calls[0][2];
+      expect(coerceRememberMeFor('123')).toEqual(123);
+
+      const coerceMfaCode = (commanderCommandMock.option as jest.Mock<{}>).mock.calls[1][2];
+      expect(coerceMfaCode('123')).toEqual('123');
+
+      const coercePin = (commanderCommandMock.option as jest.Mock<{}>).mock.calls[2][2];
+      expect(coercePin('123')).toEqual(123);
+    });
+
+    it('should register an action that executes the command', () => {
+      expect(action).toBeDefined();
+      action('john', undefined, { pin: 8008, rememberMeFor: 3, mfaCode: 'abcdef' });
+      expect(loginHandler).toHaveBeenCalledWith({ username: 'john', password: undefined, pin: 8008, rememberMeFor: 3, mfaCode: 'abcdef' });
+    });
+
+    it('should register an action that executes the command and handles errors', async () => {
+      jest.spyOn(console, 'error').mockImplementation(noop);
+      (loginHandler as jest.Mock<{}>).mockImplementation(() => {
+        throw new Error('Computer says no');
+      });
+      expect(action).toBeDefined();
+      await expect(action('john', undefined, {})).resolves.toBeUndefined();
+      expect(loginHandler).toHaveBeenCalledWith({ username: 'john' });
+      // tslint:disable-next-line:no-console
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringMatching(/Computer says no/gi)
+      );
+      expect(process.exit).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('getCommandUsage', () => {
+    it('should return usage for a registered command', () => {
+      const command: CommandDefinition<any> = {
+        name: 'login',
+        description: 'Logs user in',
+        paramsClass: LoginCommandParams,
+        type: LoginCommand
+      };
+
+      registerCommand(command);
+
+      const usage = getCommandUsage(LoginCommand);
+
+      expect(usage).toEqual('login <username> [password]');
+    });
+
+    it('should throw an error when command is unknown', () => {
+      class NotACommand { }
+      expect(() => getCommandUsage(NotACommand as any)).toThrowError(new Error('Class is not a command'));
+    });
+  });
+});
