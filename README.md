@@ -21,7 +21,18 @@ npm install classy-commander --save
 
 
 ## Usage
-Here is a simple example that lets you log into the Department of Defense.
+First let's enable support for decorators in your tsconfig.json (if you're using TypeScript).
+`tsconfig.json`
+```json
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  }
+}
+```
+
+Now here is a simple example that lets you log into the Department of Defense.
 
 `index.ts`
 ```typescript
