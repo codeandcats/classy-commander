@@ -1,6 +1,6 @@
 {
   "name": "classy-commander",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A TypeScript wrapper for Commander that lets you easily declare commands using classes & decorators and provides strongly typed arguments.",
   "main": "index.js",
   "scripts": {
@@ -41,8 +41,10 @@
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
     "@commitlint/prompt-cli": "^7.1.2",
+    "@types/app-root-path": "^1.2.4",
     "@types/fs-extra": "^5.0.4",
     "@types/jest": "^23.3.2",
+    "app-root-path": "^2.1.0",
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
     "standard-version": "^4.4.0",

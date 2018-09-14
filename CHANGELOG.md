@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.2"></a>
+## [1.2.2](https://github.com/codeandcats/classy-commander/compare/v1.2.1...v1.2.2) (2018-09-14)
+
+
+### Bug Fixes
+
+* **version:** fix bug from using app-root-path inside a node_module ([2aa7276](https://github.com/codeandcats/classy-commander/commit/2aa7276))
+
+
+
 <a name="1.2.1"></a>
 ## [1.2.1](https://github.com/codeandcats/classy-commander/compare/v1.2.0...v1.2.1) (2018-09-13)
 
