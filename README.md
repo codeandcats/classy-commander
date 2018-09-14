@@ -190,7 +190,9 @@ Session will be kept alive for 7 days
 
 
 ## Specifying the version
-By default classy-commander will report the version stored in your the `package.json`, or you can optionally specify your own.
+There are two ways to specify the version of your CLI:
+
+Using the version in your `package.json`
 
 ```typescript
 import * as commander from 'classy-commander';
@@ -198,6 +200,18 @@ import * as commander from 'classy-commander';
 ...
 
 commander
-  .version('1.0.1')
+  .versionFromPackage(__dirname)
+  .execute();
+```
+
+Or manually
+
+```typescript
+import * as commander from 'classy-commander';
+
+...
+
+commander
+  .version('1.3.1')
   .execute();
 ```

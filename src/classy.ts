@@ -1,7 +1,7 @@
 // tslint:disable:no-console
-import * as root from 'app-root-path';
 import * as cli from 'commander';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 import { setIocContainer } from './commander';
 import { IocContainer } from './types';
 
@@ -18,8 +18,15 @@ export class Commander {
     return this;
   }
 
+  public versionFromPackage(dirName: string): this {
+    this._version = this.getPackageVersion(path.resolve(dirName, './package.json'));
+    return this;
+  }
+
   public async execute(argv?: string[]): Promise<void> {
-    await this.setVersion();
+    if (this._version) {
+      cli.version(this._version);
+    }
 
     const args = argv || process.argv;
 
@@ -30,25 +37,11 @@ export class Commander {
     cli.parse(args);
   }
 
-  private async getPackageVersion(): Promise<string | undefined> {
-    const packageFileName = root.resolve('package.json');
-    if (!await fs.pathExists(packageFileName)) {
+  private getPackageVersion(packageFileName: string): string | undefined {
+    if (!fs.pathExistsSync(packageFileName)) {
       return undefined;
     }
-
-    const packageObject = await fs.readJSON(packageFileName);
-
+    const packageObject = fs.readJSONSync(packageFileName);
     return packageObject && packageObject.version;
-  }
-
-  private async setVersion() {
-    const version =
-      this._version !== undefined ?
-        this._version :
-        await this.getPackageVersion();
-
-    if (version) {
-      cli.version(version);
-    }
   }
 }

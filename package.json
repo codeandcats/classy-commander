@@ -41,7 +41,6 @@
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
     "@commitlint/prompt-cli": "^7.1.2",
-    "@types/app-root-path": "^1.2.4",
     "@types/fs-extra": "^5.0.4",
     "@types/jest": "^23.3.2",
     "jest": "^23.6.0",
@@ -54,7 +53,6 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "app-root-path": "^2.1.0",
     "chalk": "^2.4.1",
     "commander": "^2.18.0",
     "fs-extra": "^7.0.0",
