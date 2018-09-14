@@ -12,6 +12,10 @@ export function version(version: string): Commander {
   return commander.version(version);
 }
 
+export function versionFromPackage(dirName: string): Commander {
+  return commander.versionFromPackage(dirName);
+}
+
 export function ioc(container: IocContainer): Commander {
   return commander.ioc(container);
 }
