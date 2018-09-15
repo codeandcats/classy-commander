@@ -256,6 +256,82 @@ Session will be kept alive for 7 days
 
 
 
+## Dependency Injection
+To keep our command simple and easy to test, we can move some of its code into other services, and have those services automatically injected into the command when it is created. Let's use the awesome [Inversify](http://inversify.io/) library (though in principal we could use any JavaScript Inversion of Control library).
+
+`./services/auth.ts`
+```typescript
+import { injectable } from 'inversify';
+
+@injectable()
+export class AuthService {
+  login(username: string, password: string, keepAliveDurationDays: number) {
+    if (password === 'Password123' || (username === 'guest' && !password)) {
+      return true;
+    }
+
+    return false;
+  }
+}
+```
+
+`./services/logger.ts`
+```typescript
+@injectable()
+export class Logger {
+  log(...args: any[]) {
+    console.log(...args);
+  }
+
+  error(...args: any[]) {
+    console.error(...args);
+  }
+}
+```
+
+`./commands/login.ts`
+```typescript
+import { Command, command, option, value } from 'classy-commander';
+import { AuthService } from '../services/auth.ts';
+import { Logger } from '../services/logger.ts';
+
+export class LoginParams {
+  @value()
+  username: string = '';
+
+  @value()
+  password: string = '';
+
+  @option({ valueName: 'days', description: 'Number of days to keep user logged in for' })
+  rememberMeFor: number = 3;
+}
+
+@injectable()
+@command('login', LoginParams)
+export class LoginCommand implements Command<LoginParams> {
+  constructor(private auth: AuthService, private logger: Logger) {
+  }
+
+  async execute(params: LoginParams) {
+    const { username, password, rememberMeFor } = params;
+
+    if (this.auth.login(username, password, rememberMeFor)) {
+      this.logger.log(`Authenticated. Welcome ${username}`);
+
+      if (rememberMeFor) {
+        this.logger.log(`Session will be kept alive for ${rememberMeFor} days`);
+      }
+
+      return;
+    }
+
+    this.logger.error('Password incorrect');
+  }
+}
+```
+
+
+
 ## Specifying the version
 There are two ways to specify the version of your CLI:
 
