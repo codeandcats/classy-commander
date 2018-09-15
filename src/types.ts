@@ -26,7 +26,7 @@ export interface CommandDefinition<TParams> {
 }
 
 export interface Command<TParams> {
-  execute(params: TParams): Promise<void>;
+  execute(params: TParams): Promise<void> | void;
 }
 
 export interface CommandParamsClass<T> {

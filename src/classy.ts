@@ -38,10 +38,12 @@ export class Commander {
   }
 
   private getPackageVersion(packageFileName: string): string | undefined {
-    if (!fs.pathExistsSync(packageFileName)) {
-      return undefined;
+    const exists = fs.pathExistsSync(packageFileName);
+    if (!exists) {
+      throw new Error('Could not find package.json to load version from');
     }
     const packageObject = fs.readJSONSync(packageFileName);
-    return packageObject && packageObject.version;
+    const version = packageObject && packageObject.version;
+    return version;
   }
 }

@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import * as cli from 'commander';
+import { errorToString } from './errors';
 import { getCommandOptions, getCommandValues } from './metadata';
 import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, IocContainer } from './types';
 
@@ -47,10 +48,8 @@ function getParams(
 
   const optionValues = args[paramIndex];
 
-  if (optionValues) {
-    for (const option of options) {
-      params[option.name.toString()] = optionValues[option.name];
-    }
+  for (const option of options) {
+    params[option.name.toString()] = optionValues[option.name];
   }
 
   return params;
@@ -110,7 +109,7 @@ export function registerCommand(commandDefinition: CommandDefinition<any>) {
     } catch (err) {
       // tslint:disable:no-console
       console.error();
-      console.error(chalk.red(err.stack || err.message || err));
+      console.error(chalk.red(errorToString(err)));
       console.error();
       process.exit(1);
       // tslint:enable:no-console
@@ -123,7 +122,7 @@ export function getCommandDefinitionUsage(commandDefinition: CommandDefinition<a
   const valuesUsage = values
     .map((param) => param.optional ? `[${param.name}]` : `<${param.name}>`)
     .join(' ');
-  const usage = `${commandDefinition.name} ${valuesUsage}`;
+  const usage = `${commandDefinition.name} ${valuesUsage}`.trim();
   return usage;
 }
 
