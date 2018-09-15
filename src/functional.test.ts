@@ -179,14 +179,14 @@ describe('Functional Test', () => {
       process.argv = originalProcessArgs!;
     });
 
-    it('should get args from process.argv', () => {
-      cli.execute();
+    it('should get args from process.argv', async () => {
+      await cli.execute();
       expect(auth.login).toHaveBeenCalledTimes(1);
     });
   });
 
-  it('should log errors and exit', () => {
-    cli.execute(['', '', 'admin']);
+  it('should log errors and exit', async () => {
+    await cli.execute(['', '', 'admin']);
 
     // tslint:disable-next-line:no-console
     expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Not authorised/i));
