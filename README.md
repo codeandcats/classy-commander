@@ -2,6 +2,7 @@
 A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides strongly typed arguments.
 
 
+
 ## Features
 - Write commands as modular classes that can be easily tested
 - Specify command usage via a class with decorators
@@ -12,6 +13,7 @@ A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that l
 - Coercion
 - Version from package.json
 - Support for Inversion of Control containers like [Inversify](http://inversify.io/)
+
 
 
 ## Install
@@ -32,9 +34,11 @@ First let's enable support for decorators in your tsconfig.json (if you're using
 }
 ```
 
-Now here is a simple example that lets you log into the Department of Defense.
+Here is a simple example that lets you log into the Department of Defense.
 
-`index.ts`
+(Ignore the fact that we're hard-coding passwords - this is just an example!)
+
+`./index.ts`
 ```typescript
 import * as commander from 'classy-commander';
 
@@ -59,11 +63,15 @@ export class LoginParams {
 export class Login implements Command<LoginParams> {
 
   async execute(params: LoginParams) {
-    if (params.password !== 'Password123') {
-      return console.error('Password incorrect');
+    const { username, password } = params;
+
+    if (password === 'Password123') {
+      console.log(`Authenticated. Welcome ${username}.`);
+
+      return;
     }
 
-    console.log(`Authenticated. Welcome ${params.username}.`);
+    console.error('Password incorrect');
   }
 
 }
@@ -90,11 +98,61 @@ Running `ts-node ./index.ts login John Password123` outputs:
 Authenticated. Welcome John.
 ```
 
+
+## Using optional values
+
+Now lets allow users to log in as "guest" with no password.
+
+```typescript
+import { Command, command, value } from 'classy-commander';
+
+export class LoginParams {
+  @value()
+  username: string = '';
+
+  @value({ optional: true })
+  password?: string;
+}
+
+@command('login', LoginParams)
+export class Login implements Command<LoginParams> {
+
+  async execute(params: LoginParams) {
+    const { username, password } = params;
+
+    if (password === 'Password123' || (username === 'guest' && !password)) {
+      console.log(`Authenticated. Welcome ${username}.`);
+
+      return;
+    }
+
+    console.error('Password incorrect');
+  }
+
+}
+```
+
+Running `ts-node ./index.ts --help` now outputs:
+
+```
+  Usage: index.ts [options] [command]
+
+  Options:
+
+    -V, --version                          output the version number
+    -h, --help                             output usage information
+
+  Commands:
+
+    login [options] <username> [password]
+```
+
+
+
 ## Using options
 
-Lets update our awesome login command to optionally keep the user's session alive.
+Now let's change the login command to optionally keep the user's session alive.
 
-`./commands/login.ts`
 ```typescript
 import { Command, command, option, value } from 'classy-commander';
 
@@ -113,15 +171,19 @@ export class LoginParams {
 export class LoginCommand implements Command<LoginParams> {
 
   async execute(params: LoginParams) {
-    if (params.password !== 'Password123') {
-      return console.error('Password incorrect');
+    const { username, password, rememberMe } = params;
+
+    if (password === 'Password123' || (username === 'guest' && !password)) {
+      console.log(`Authenticated. Welcome ${username}`);
+
+      if (rememberMe) {
+        console.log(`Session will be kept alive until you log out`);
+      }
+
+      return;
     }
 
-    console.log(`Authenticated. Welcome ${params.username}`);
-
-    if (params.rememberMe) {
-      console.log(`Session will be kept alive until you log out`);
-    }
+    console.error('Password incorrect');
   }
 
 }
@@ -157,15 +219,19 @@ export class LoginParams {
 @command('login', LoginParams)
 export class LoginCommand implements Command<LoginParams> {
   async execute(params: LoginParams) {
-    if (params.password !== 'Password123') {
-      return console.error('Password incorrect');
+    const { username, password, rememberMeFor } = params;
+
+    if (password === 'Password123' || (username === 'guest' && !password)) {
+      console.log(`Authenticated. Welcome ${username}`);
+
+      if (rememberMeFor) {
+        console.log(`Session will be kept alive for ${rememberMeFor} days`);
+      }
+
+      return;
     }
 
-    console.log(`Authenticated. Welcome ${params.username}`);
-
-    if (params.rememberMeFor) {
-      console.log(`Session will be kept alive for ${params.rememberMeFor} days`);
-    }
+    console.error('Password incorrect');
   }
 }
 ```
@@ -187,6 +253,7 @@ Running `ts-node index.ts login John Password123 --rememberMeFor 7` outputs:
 Authenticated. Welcome John
 Session will be kept alive for 7 days
 ```
+
 
 
 ## Specifying the version
@@ -215,3 +282,5 @@ commander
   .version('1.3.1')
   .execute();
 ```
+
+
