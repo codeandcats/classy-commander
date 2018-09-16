@@ -1,105 +1,19 @@
 import * as commander from 'commander';
 import * as fs from 'fs-extra';
-import { Container, injectable } from 'inversify';
-import { command } from './decorators';
+import { Container } from 'inversify';
+import * as path from 'path';
 import * as cli from './index';
-import { Command, option, value } from './index';
+import { AuthService } from './testFixtures/services/auth';
+import { Logger } from './testFixtures/services/logger';
 
 const noop = () => {
   //
 };
 
-@injectable()
-export class Logger {
-  log(...args: any[]) {
-    // console.log(...args);
-  }
-
-  error(...args: any[]) {
-    // console.error(...args);
-  }
-}
-
-@injectable()
-export class AuthService {
-  constructor(private logger: Logger) {
-  }
-
-  login(username: string, password: string | undefined, keepAliveDurationDays: number) {
-    if (password === 'swordfish' || (username === 'guest' && !password)) {
-      this.logger.log(`User authenticated`);
-      return;
-    }
-
-    this.logger.error('Incorrect username and password combination');
-  }
-
-  logout() {
-    this.logger.log('Logged out');
-  }
-}
-
-export class LoginCommandParams {
-  @value()
-  username: string = '';
-
-  @value({ optional: true })
-  password?: string;
-
-  @option({ description: 'Keeps session alive', valueName: 'days' })
-  rememberMeFor: number = 1;
-}
-
-@command('login', LoginCommandParams)
-@injectable()
-export class LoginCommand implements Command<LoginCommandParams> {
-  constructor(private auth: AuthService) {
-  }
-
-  execute(params: LoginCommandParams) {
-    this.auth.login(params.username, params.password, params.rememberMeFor);
-  }
-}
-
-class LogoutCommandParams {
-}
-
-@command('logout', LogoutCommandParams)
-@injectable()
-class LogoutCommand implements Command<LogoutCommandParams> {
-  constructor(private auth: AuthService) {
-  }
-
-  execute() {
-    this.auth.logout();
-  }
-}
-
-@injectable()
-class AdminService {
-  someAdminFunction() {
-    throw new Error('Not authorised');
-  }
-}
-
-class AdminCommandParams {
-}
-
-@command('admin', AdminCommandParams)
-@injectable()
-class AdminCommand implements Command<AdminCommandParams> {
-  constructor(private admin: AdminService) {
-  }
-
-  execute() {
-    this.admin.someAdminFunction();
-  }
-}
-
-describe('Functional Test', () => {
+describe('Functional Tests', () => {
   let auth: AuthService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.spyOn(console, 'error').mockImplementation(noop);
     jest.spyOn(process, 'exit').mockImplementation(noop);
 
@@ -111,6 +25,8 @@ describe('Functional Test', () => {
     container.bind(AuthService).toConstantValue(auth);
 
     cli.ioc(container);
+
+    await cli.commandsFromDirectory(path.join(__dirname, 'testFixtures', 'commands'));
   });
 
   afterEach(() => jest.restoreAllMocks());
@@ -191,11 +107,5 @@ describe('Functional Test', () => {
     // tslint:disable-next-line:no-console
     expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Not authorised/i));
     expect(process.exit).toHaveBeenCalledWith(1);
-  });
-
-  it('should allow getting command usage', () => {
-    expect(cli.getCommandUsageString(LoginCommand)).toEqual('login <username> [password]');
-    expect(cli.getCommandUsageString(LogoutCommand)).toEqual('logout');
-    expect(cli.getCommandUsageString(AdminCommand)).toEqual('admin');
   });
 });

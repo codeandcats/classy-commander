@@ -10,7 +10,7 @@ A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that l
 - Optional values
 - Options
 - Options with values
-- Coercion
+- Automatic coercion
 - Version from package.json
 - Support for Inversion of Control containers like [Inversify](http://inversify.io/)
 
@@ -36,15 +36,19 @@ First let's enable support for decorators in your tsconfig.json (if you're using
 
 Here is a simple example that lets you log into the Department of Defense.
 
-(Ignore the fact that we're hard-coding passwords - this is just an example!)
 
 `./index.ts`
 ```typescript
 import * as commander from 'classy-commander';
 
-import './commands/login';
+async function run() {
+  const commandsPath = path.join(__dirname, 'commands');
+  await cli.commandsFromDirectory(commandsPath);
 
-commander.execute();
+  cli.execute();
+}
+
+run().catch(console.error);
 ```
 
 `./commands/login.ts`

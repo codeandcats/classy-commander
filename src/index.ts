@@ -20,6 +20,14 @@ export function ioc(container: IocContainer): Commander {
   return commander.ioc(container);
 }
 
+/**
+ * Loads all commands within a directory so you don't need to require them individually.
+ * @param directoryPath Directory path of the commands.
+ */
+export async function commandsFromDirectory(directoryPath: string): Promise<Commander> {
+  return commander.commandsFromDirectory(directoryPath);
+}
+
 export async function execute(argv?: string[]): Promise<void> {
   return commander.execute(argv);
 }

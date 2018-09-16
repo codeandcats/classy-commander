@@ -1,7 +1,7 @@
 // tslint:disable:no-console
 import { Command, command, option, value } from '../../src';
 
-export class LoginParams {
+export class LoginCommandParams {
   @value()
   username: string = '';
 
@@ -12,9 +12,9 @@ export class LoginParams {
   rememberMeFor: number = 1;
 }
 
-@command('login', LoginParams)
-export class LoginCommand implements Command<LoginParams> {
-  async execute(params: LoginParams) {
+@command('login', LoginCommandParams)
+export class LoginCommand implements Command<LoginCommandParams> {
+  async execute(params: LoginCommandParams) {
     if (params.username.toLowerCase() !== 'guest') {
       if (params.password !== 'Password123') {
         return console.error('Password incorrect');

@@ -1,7 +1,11 @@
-// tslint:disable:no-console
+import * as path from 'path';
 import * as cli from '../src';
 
-import './commands/greet';
-import './commands/login';
+async function run() {
+  const commandsPath = path.join(__dirname, 'commands');
+  await cli.commandsFromDirectory(commandsPath);
+  await cli.execute();
+}
 
-cli.execute().catch((err) => console.error(err));
+// tslint:disable-next-line:no-console
+run().catch((err) => console.error(err));
