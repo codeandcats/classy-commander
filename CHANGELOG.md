@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/codeandcats/classy-commander/compare/v2.0.1...v3.0.0) (2018-09-16)
+
+
+### Features
+
+* **core:** will now coerce values to correct type ([1164430](https://github.com/codeandcats/classy-commander/commit/1164430))
+
+
+### BREAKING CHANGES
+
+* **core:** execute function no longer returns a promise
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/codeandcats/classy-commander/compare/v2.0.0...v2.0.1) (2018-09-16)
 
