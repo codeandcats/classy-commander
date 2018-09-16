@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import * as cli from 'commander';
+import { coerceValue } from './coercion';
 import { errorToString } from './errors';
 import { getCommandOptions, getCommandValues } from './metadata';
 import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, IocContainer } from './types';
@@ -39,11 +40,14 @@ function getParams(
   const values = getCommandValues(command.paramsClass.prototype);
   const options = getCommandOptions(command.paramsClass.prototype);
 
-  const params: { [paramName: string]: any } = new command.paramsClass();
+  const params: { [paramName: string]: string | number | boolean } = new command.paramsClass();
   let paramIndex = 0;
 
   for (const value of values) {
-    params[value.name] = args[paramIndex++];
+    params[value.name] = coerceValue(
+      args[paramIndex++],
+      value.type as any // Not sure why TS complains here without cast to any 🤔
+    );
   }
 
   const optionValues = args[paramIndex];
@@ -67,7 +71,7 @@ function registerCommandOption(
   option: CommandOptionDefinition
 ) {
   const optionUsage = getOptionUsage(option);
-  const coerceValue = !option.valueName ? undefined : ((value: string) => {
+  const coercedValue = !option.valueName ? undefined : ((value: string) => {
     if (option.valueName && option.type === Number) {
       return +value;
     } else {
@@ -81,7 +85,7 @@ function registerCommandOption(
   cliCommand.option(
     optionUsage,
     option.description,
-    coerceValue,
+    coercedValue,
     defaultValue
   );
 }

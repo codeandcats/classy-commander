@@ -28,7 +28,7 @@ export async function commandsFromDirectory(directoryPath: string): Promise<Comm
   return commander.commandsFromDirectory(directoryPath);
 }
 
-export async function execute(argv?: string[]): Promise<void> {
+export function execute(argv?: string[]) {
   return commander.execute(argv);
 }
 
