@@ -417,11 +417,7 @@ import * as cli from 'classy-commander';
 import * as path from 'path';
 
 async function run() {
-  await cli
-    .versionFromPackage(__dirname)
-    .ioc(container)
-    .commandsFromDirectory(path.join(__dirname, '/commands'));
-
+  await cli.commandsFromDirectory(path.join(__dirname, '/commands'));
   cli.execute();
 }
 
