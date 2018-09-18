@@ -18,13 +18,20 @@ export const command = <TParams>(
   };
 };
 
-export const option = (options?: CommandOptionDefinitionOptions) => ((target: any, name: string) => {
+export const option = (options?: CommandOptionDefinitionOptions) => (target: any, name: string) => {
   meta.addCommandOption(target, name, options);
-});
+};
 
-export const value = (options?: { optional?: boolean }) => ((target: any, name: string) => {
-  meta.addCommandValue(target, {
+export interface ValueOptions {
+  optional?: boolean;
+  variadic?: { type: typeof String | typeof Number | typeof Boolean };
+}
+
+export const value = (options?: ValueOptions) => (target: any, name: string) => {
+  meta.addCommandValue({
     name,
-    optional: !!(options && options.optional)
+    paramsClassPrototype: target,
+    optional: !!(options && options.optional),
+    variadicType: options && options.variadic && options.variadic.type
   });
-});
+};

@@ -1,15 +1,16 @@
 import chalk from 'chalk';
 import * as cli from 'commander';
+import * as _ from 'lodash';
 import { coerceValue } from './coercion';
 import { errorToString } from './errors';
 import { getCommandOptions, getCommandValues } from './metadata';
-import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, IocContainer } from './types';
+import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, CommandValueDefinition, IocContainer } from './types';
 
 let iocContainer: IocContainer | undefined;
 
 const commandDefinitions: Array<CommandDefinition<any>> = [];
 
-export function setIocContainer(container: IocContainer) {
+export function setIocContainer(container: IocContainer | undefined) {
   iocContainer = container;
 }
 
@@ -40,14 +41,23 @@ function getParams(
   const values = getCommandValues(command.paramsClass.prototype);
   const options = getCommandOptions(command.paramsClass.prototype);
 
-  const params: { [paramName: string]: string | number | boolean } = new command.paramsClass();
+  const params: {
+    [key: string]: string | number | boolean | undefined | string[] | number[] | boolean[]
+  } = new command.paramsClass();
+
   let paramIndex = 0;
 
   for (const value of values) {
-    params[value.name] = coerceValue(
-      args[paramIndex++],
-      value.type as any // Not sure why TS complains here without cast to any 🤔
+    const argValue = args[paramIndex++];
+    const defaultValue = params[value.name];
+
+    const paramValue = coerceValue(
+      argValue,
+      value.type as any,
+      defaultValue
     );
+
+    params[value.name] = paramValue;
   }
 
   const optionValues = args[paramIndex];
@@ -121,11 +131,24 @@ export function registerCommand(commandDefinition: CommandDefinition<any>) {
   });
 }
 
+function valueDefinitionToUsageString(value: CommandValueDefinition) {
+  const name = `${value.name}${value.variadic ? '...' : ''}`;
+  const usage = value.optional ? `[${name}]` : `<${name}>`;
+  return usage;
+}
+
 export function getCommandDefinitionUsage(commandDefinition: CommandDefinition<any>) {
   const values = getCommandValues(commandDefinition.paramsClass.prototype);
-  const valuesUsage = values
-    .map((param) => param.optional ? `[${param.name}]` : `<${param.name}>`)
-    .join(' ');
+  const valuesUsage = _
+    .chain(values)
+    .map((value, index) => ({
+      value,
+      index
+    }))
+    .sort((a, b) => a.value.variadic ? 1 : b.value.variadic ? -1 : a.index - b.index)
+    .map((valueAndIndex) => valueDefinitionToUsageString(valueAndIndex.value))
+    .join(' ')
+    .value();
   const usage = `${commandDefinition.name} ${valuesUsage}`.trim();
   return usage;
 }

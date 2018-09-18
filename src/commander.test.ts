@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import * as commander from 'commander';
 import { getCommandUsage, getIocContainer, registerCommand, setIocContainer } from './commander';
 import { option, value } from './decorators';
@@ -9,8 +8,6 @@ jest.mock('commander');
 const noop = () => {
   //
 };
-
-// TODO: Fix decorator warnings
 
 describe('src/commander', () => {
   let loginHandler: (params: LoginCommandParams) => void | undefined;
@@ -41,6 +38,23 @@ describe('src/commander', () => {
     }
   }
 
+  class AddCommandParams {
+    @value()
+    base10: boolean = true;
+
+    @value({ variadic: { type: Number } })
+    values: number[] = [];
+
+    @value()
+    zeroResultOnError: boolean = false;
+  }
+
+  class AddCommand {
+    execute(params: AddCommandParams) {
+      //
+    }
+  }
+
   beforeEach(() => {
     loginHandler = jest.fn();
     jest.spyOn(process, 'exit').mockImplementation(noop);
@@ -54,7 +68,7 @@ describe('src/commander', () => {
     afterEach(() => setIocContainer(undefined));
 
     it('should set the ioc container to use when instantiating commands', () => {
-      const container: IocContainer = { get: () => null };
+      const container: IocContainer = { get: () => null as any };
       setIocContainer(container);
       expect(getIocContainer()).toEqual(container);
     });
@@ -157,5 +171,25 @@ describe('src/commander', () => {
       class NotACommand { }
       expect(() => getCommandUsage(NotACommand as any)).toThrowError(new Error('Class is not a command'));
     });
+  });
+
+  it('should return usage for a registered command with a variadic value', () => {
+    const command: CommandDefinition<any> = {
+      name: 'add',
+      description: 'Adds two or more numbers',
+      paramsClass: AddCommandParams,
+      type: AddCommand
+    };
+
+    registerCommand(command);
+
+    const usage = getCommandUsage(AddCommand);
+
+    expect(usage).toEqual('add <base10> <zeroResultOnError> <values...>');
+  });
+
+  it('should throw an error when command is unknown', () => {
+    class NotACommand { }
+    expect(() => getCommandUsage(NotACommand as any)).toThrowError(new Error('Class is not a command'));
   });
 });

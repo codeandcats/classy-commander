@@ -12,11 +12,33 @@ export function getCommandValues(paramsClassPrototype: any): CommandValueDefinit
   return [...(Reflect.getOwnMetadata(metadataKeys.values, paramsClassPrototype) || [])];
 }
 
-export function addCommandValue(paramsClassPrototype: any, options: Pick<CommandValueDefinition, 'name' | 'optional'>) {
-  const type = Reflect.getMetadata('design:type', paramsClassPrototype, options.name);
+export interface AddCommandValueOptions {
+  paramsClassPrototype: any;
+  name: string;
+  optional: boolean;
+  variadicType: typeof String | typeof Number | typeof Boolean | undefined;
+}
+
+export function addCommandValue(options: AddCommandValueOptions) {
+  const { name, optional, paramsClassPrototype, variadicType } = options;
+
+  const type = variadicType || Reflect.getMetadata('design:type', paramsClassPrototype, name);
+
+  const variadic = !!variadicType;
   const values = getCommandValues(paramsClassPrototype);
-  values.push({ ...options, type });
-  Reflect.defineMetadata(metadataKeys.values, values, paramsClassPrototype);
+
+  if (variadic && values.some((value) => value.variadic)) {
+    throw new Error('Command can have only one variadic value');
+  }
+
+  values.push({
+    name,
+    type,
+    optional,
+    variadic
+  });
+
+  Reflect.defineMetadata(metadataKeys.values, values, options.paramsClassPrototype);
 }
 
 export function getCommandOptions(paramsClassPrototype: any): CommandOptionDefinition[] {

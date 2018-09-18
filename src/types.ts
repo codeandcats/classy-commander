@@ -2,6 +2,7 @@ export interface CommandValueDefinition {
   name: string;
   type: typeof String | typeof Number | typeof Boolean;
   optional: boolean;
+  variadic: boolean;
 }
 
 export interface CommandOptionDefinition {

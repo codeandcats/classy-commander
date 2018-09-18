@@ -11,6 +11,11 @@ class LoginCommandParams {
   mfaCode?: number;
 }
 
+class AddCommandParams {
+  values: number[] = [];
+  precisions: number[] = [];
+}
+
 describe('src/metadata', () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -21,7 +26,8 @@ describe('src/metadata', () => {
       const values: CommandValueDefinition[] = [{
         name: 'username',
         optional: false,
-        type: String
+        type: String,
+        variadic: false
       }];
 
       jest.spyOn(Reflect, 'getOwnMetadata').mockReturnValue(values);
@@ -55,9 +61,11 @@ describe('src/metadata', () => {
       ]);
       jest.spyOn(Reflect, 'defineMetadata');
 
-      addCommandValue(LoginCommandParams.prototype, {
+      addCommandValue({
         name: 'password',
-        optional: true
+        optional: true,
+        paramsClassPrototype: LoginCommandParams.prototype,
+        variadicType: undefined
       });
 
       expect(Reflect.getMetadata).toHaveBeenCalledWith('design:type', LoginCommandParams.prototype, 'password');
@@ -73,11 +81,41 @@ describe('src/metadata', () => {
           {
             name: 'password',
             optional: true,
-            type: String
+            type: String,
+            variadic: false
           }
         ],
         LoginCommandParams.prototype
       );
+    });
+
+    it('should error when trying to register more than one variadic value per command', () => {
+      jest.spyOn(Reflect, 'getMetadata').mockReturnValue(Number);
+      jest.spyOn(Reflect, 'getOwnMetadata')
+        .mockReturnValueOnce([])
+        .mockReturnValueOnce([
+          {
+            name: 'values',
+            optional: false,
+            type: Number,
+            variadic: true
+          }
+        ]);
+      jest.spyOn(Reflect, 'defineMetadata');
+
+      addCommandValue({
+        name: 'values',
+        optional: false,
+        paramsClassPrototype: AddCommandParams.prototype,
+        variadicType: Number
+      });
+
+      expect(() => addCommandValue({
+        name: 'precisions',
+        optional: false,
+        paramsClassPrototype: AddCommandParams.prototype,
+        variadicType: Number
+      })).toThrowError(new Error('Command can have only one variadic value'));
     });
   });
 

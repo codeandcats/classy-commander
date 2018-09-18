@@ -1,5 +1,5 @@
 # classy-commander
-A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides strongly typed arguments.
+A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides you with strongly typed arguments.
 
 
 
@@ -23,315 +23,344 @@ npm install classy-commander --save
 
 
 ## Usage
-First let's enable support for decorators in your tsconfig.json (if you're using TypeScript).
-`tsconfig.json`
+First enable support for decorators in your `tsconfig.json` compiler options.
+
 ```json
 {
   "compilerOptions": {
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
   }
 }
 ```
 
-Here is a simple example that lets you log into the Department of Defense.
+Let's create a simple Calculator CLI app with a command that adds two numbers.
 
+Our entry-point looks like this.
 
-`./index.ts`
+`./calc.ts`
 ```typescript
-import * as commander from 'classy-commander';
+import * as cli from 'classy-commander';
 
-async function run() {
-  const commandsPath = path.join(__dirname, 'commands');
-  await cli.commandsFromDirectory(commandsPath);
+import './commands/add.ts';
 
-  cli.execute();
-}
-
-run().catch(console.error);
+cli.execute();
 ```
 
-`./commands/login.ts`
+Our add command looks like this.
+
+`./commands/add.ts`
 ```typescript
 import { Command, command, value } from 'classy-commander';
 
-export class LoginParams {
+export class AddCommandParams {
   @value()
-  username: string = '';
+  value1: number = 0;
 
   @value()
-  password: string = '';
+  value2: number = 0;
 }
 
-@command('login', LoginParams)
-export class Login implements Command<LoginParams> {
+@command('add', AddCommandParams, 'Adds two numbers')
+export class AddCommand implements Command<AddCommandParams> {
 
-  async execute(params: LoginParams) {
-    const { username, password } = params;
+  execute(params: AddCommandParams) {
+    const { value1, value2 } = params;
 
-    if (password === 'Password123') {
-      console.log(`Authenticated. Welcome ${username}.`);
+    const result = value1 + value2;
 
-      return;
-    }
-
-    console.error('Password incorrect');
+    console.log(`${value1} + ${value2} = ${result}`);
   }
 
 }
 ```
 
-Running `ts-node ./index.ts --help` outputs:
+For simplicity, we'll use [ts-node](https://github.com/TypeStrong/ts-node) to run our app.
+
+Running `ts-node ./calc add 1 2` outputs:
 
 ```
-  Usage: index.ts [options] [command]
-
-  Options:
-
-    -V, --version                          output the version number
-    -h, --help                             output usage information
-
-  Commands:
-
-    login [options] <username> <password>
+1 + 2 = 3
 ```
 
-Running `ts-node ./index.ts login John Password123` outputs:
-
-```
-Authenticated. Welcome John.
-```
 
 
 ## Using optional values
 
-Now lets allow users to log in as "guest" with no password.
+But what if we want to add 3 numbers?
+
+Lets allow adding an _optional_ third number.
 
 ```typescript
 import { Command, command, value } from 'classy-commander';
 
-export class LoginParams {
+export class AddCommandParams {
   @value()
-  username: string = '';
+  value1: number = 0;
+
+  @value()
+  value2: number = 0;
 
   @value({ optional: true })
-  password?: string;
+  value3: number = 0;
 }
 
-@command('login', LoginParams)
-export class Login implements Command<LoginParams> {
+@command('add', AddCommandParams, 'Adds two or three numbers')
+export class AddCommand implements Command<AddCommandParams> {
 
-  async execute(params: LoginParams) {
-    const { username, password } = params;
+  execute(params: AddCommandParams) {
+    const { value1, value2, value3 } = params;
 
-    if (password === 'Password123' || (username === 'guest' && !password)) {
-      console.log(`Authenticated. Welcome ${username}.`);
+    const result = value1 + value2 + value3;
 
-      return;
+    if (value3) {
+      console.log(`${value1} + ${value2} + ${value3} = ${result}`);
+    } else {
+      console.log(`${value1} + ${value2} = ${result}`);
     }
-
-    console.error('Password incorrect');
   }
 
 }
 ```
 
-Running `ts-node ./index.ts --help` now outputs:
+Running `ts-node ./calc add 1 2 3` now outputs:
 
 ```
-  Usage: index.ts [options] [command]
+1 + 2 + 3 = 6
+```
 
-  Options:
+Adding two numbers still works. `ts-node ./calc add 1 2` outputs:
+```
+1 + 2 = 6
+```
 
-    -V, --version                          output the version number
-    -h, --help                             output usage information
 
-  Commands:
 
-    login [options] <username> [password]
+## Variadic Arguments
+
+Okay, but what if we want to add 4 numbers, or 5? This could get messy.
+
+It's time to turn our values into a variadic value.
+
+```typescript
+import { Command, command, value } from 'classy-commander';
+
+export class AddCommandParams {
+  @value({ variadic: { type: Number } })
+  values: number[] = [];
+}
+
+@command('add', AddCommandParams, 'Adds two or more numbers')
+export class AddCommand implements Command<AddCommandParams> {
+
+  execute(params: AddCommandParams) {
+    const { values } = params;
+
+    const result = values.reduce((total, val) => total + val, 0);
+
+    console.log(`${values.join(' + ')} = ${result}`);
+  }
+
+}
+```
+
+Running `ts-node ./calc add 1 2 3 4 5` now outputs:
+
+```
+1 + 2 + 3 + 4 + 5 = 15
 ```
 
 
 
 ## Using options
 
-Now let's change the login command to optionally keep the user's session alive.
+Let's add an option to show thousand separators.
 
 ```typescript
 import { Command, command, option, value } from 'classy-commander';
 
-export class LoginParams {
-  @value()
-  username: string = '';
+export class AddCommandParams {
+  @value({ variadic: { type: Number } })
+  values: number[] = [];
 
-  @value()
-  password: string = '';
-
-  @option({ description: 'Keeps user logged in' })
-  rememberMe: boolean = false;
+  @option({ shortName: 't' })
+  thousandSeparators: boolean = false;
 }
 
-@command('login', LoginParams)
-export class LoginCommand implements Command<LoginParams> {
+@command('add', AddCommandParams, 'Adds two or more numbers')
+export class AddCommand implements Command<AddCommandParams> {
 
-  async execute(params: LoginParams) {
-    const { username, password, rememberMe } = params;
+  execute(params: AddCommandParams) {
+    const { values, thousandSeparators } = params;
 
-    if (password === 'Password123' || (username === 'guest' && !password)) {
-      console.log(`Authenticated. Welcome ${username}`);
+    const result = values.reduce((total, val) => total + val, 0);
 
-      if (rememberMe) {
-        console.log(`Session will be kept alive until you log out`);
-      }
+    const format = (val: number) => val.toLocaleString(undefined, {
+      useGrouping: thousandSeparators
+    });
 
-      return;
-    }
-
-    console.error('Password incorrect');
+    console.log(`${values.map((val) => format(val)).join(' + ')} = ${format(result)}`);
   }
 
 }
 ```
 
-Running `ts-node index.ts login John Password123 --rememberMe` outputs:
+Running `ts-node ./calc add 500 1000 --thousandSeparators` or `ts-node ./calc add 500 1000 -t` will output:
 
 ```
-Authenticated. Welcome John
-Session will be kept alive until you log out.
+500 + 1,000 = 1,500
 ```
 
 
 
 ## Using option values
 
-Let's update our login command to allow specifying the number of days to keep the user logged in for.
+Lets add an option with a value that lets us specify the number of decimal places to show.
 
 ```typescript
 import { Command, command, option, value } from 'classy-commander';
 
-export class LoginParams {
-  @value()
-  username: string = '';
+export class AddCommandParams {
+  @value({ variadic: { type: Number } })
+  values: number[] = [];
 
-  @value()
-  password: string = '';
+  @option({ shortName: 't' })
+  thousandSeparators: boolean = false;
 
-  @option({ valueName: 'days', description: 'Number of days to keep user logged in for' })
-  rememberMeFor: number = 3;
+  @option({ shortName: 'd', valueName: 'count' })
+  decimalPlaces: number = 0;
 }
 
-@command('login', LoginParams)
-export class LoginCommand implements Command<LoginParams> {
-  async execute(params: LoginParams) {
-    const { username, password, rememberMeFor } = params;
+@command('add', AddCommandParams, 'Adds two or more numbers')
+export class AddCommand implements Command<AddCommandParams> {
 
-    if (password === 'Password123' || (username === 'guest' && !password)) {
-      console.log(`Authenticated. Welcome ${username}`);
+  execute(params: AddCommandParams) {
+    const { values, thousandSeparators, decimalPlaces } = params;
 
-      if (rememberMeFor) {
-        console.log(`Session will be kept alive for ${rememberMeFor} days`);
-      }
+    const result = values.reduce((total, val) => total + val, 0);
 
-      return;
-    }
+    const format = (val: number) => val.toLocaleString(undefined, {
+      useGrouping: thousandSeparators,
+      maximumFractionDigits: decimalPlaces
+    });
 
-    console.error('Password incorrect');
+    console.log(`${values.map((val) => format(val)).join(' + ')} = ${format(result)}`);
   }
+
 }
 ```
 
-Running `ts-node index.ts login --help` outputs:
+Running `ts-node ./calc add 1 2.2345 --decimalPlaces 2` will output:
 
 ```
-  Usage: login [options] <username> <password>
-
-  Options:
-
-    --rememberMeFor <days>  Number of days to keep user logged in for (default: 3)
-    -h, --help              output usage information
+1 + 2.23 = 3.23
 ```
 
-Running `ts-node index.ts login John Password123 --rememberMeFor 7` outputs:
+
+
+## Getting usage
+
+Running `ts-node ./calc.ts --help` outputs:
 
 ```
-Authenticated. Welcome John
-Session will be kept alive for 7 days
+  Usage: calc [options] [command]
+
+Options:
+
+  -h, --help                 output usage information
+
+Commands:
+
+  add [options] <values...>
+```
+
+Running `ts-node ./calc.ts add --help` shows the usage for our `add` command:
+
+```
+Usage: add [options] <values...>
+
+Options:
+
+  -t, --thousandSeparators
+  -d, --decimalPlaces <count>   (default: 0)
+  -h, --help                   output usage information
 ```
 
 
 
 ## Dependency Injection
-To keep our command simple and easy to test, we can move some of its code into other services, and have those services automatically injected into the command when it is created. Let's use the awesome [Inversify](http://inversify.io/) library (though in principal we could use any JavaScript Inversion of Control library).
+To keep our add command easy to test, lets move that heavy math into a calculator service, and have that service automatically injected into the command when it gets created. Let's use the awesome [Inversify](http://inversify.io/) library which has excellent support for TypeScript (though in principal we could use any JavaScript Dependency Injection library).
 
-`./services/auth.ts`
+Let's start by adding the calculator service.
+
+`./services/calculator.ts`
 ```typescript
 import { injectable } from 'inversify';
 
 @injectable()
-export class AuthService {
-  login(username: string, password: string, keepAliveDurationDays: number) {
-    if (password === 'Password123' || (username === 'guest' && !password)) {
-      return true;
-    }
-
-    return false;
+export class Calculator {
+  add(...amounts: number[]) {
+    return amounts.reduce((total, amount) => total + amount, 0);
   }
 }
 ```
 
-`./services/logger.ts`
-```typescript
-@injectable()
-export class Logger {
-  log(...args: any[]) {
-    console.log(...args);
-  }
+Now lets update our add command to use the service.
 
-  error(...args: any[]) {
-    console.error(...args);
-  }
-}
-```
-
-`./commands/login.ts`
+`./commands/add.ts`
 ```typescript
+import { injectable } from 'inversify';
 import { Command, command, option, value } from 'classy-commander';
-import { AuthService } from '../services/auth.ts';
-import { Logger } from '../services/logger.ts';
+import { Calculator } from '../services/calculator';
 
-export class LoginParams {
-  @value()
-  username: string = '';
+export class AddCommandParams {
+  @value({ variadic: { type: Number } })
+  values: number[] = [];
 
-  @value()
-  password: string = '';
+  @option({ shortName: 't' })
+  thousandSeparators: boolean = false;
 
-  @option({ valueName: 'days', description: 'Number of days to keep user logged in for' })
-  rememberMeFor: number = 3;
+  @option({ shortName: 'd', valueName: 'count' })
+  decimalPlaces: number = 0;
 }
 
+@command('add', AddCommandParams, 'Adds two or more numbers')
 @injectable()
-@command('login', LoginParams)
-export class LoginCommand implements Command<LoginParams> {
-  constructor(private auth: AuthService, private logger: Logger) {
+export class AddCommand implements Command<AddCommandParams> {
+  constructor(private calculator: Calculator) {
   }
 
-  async execute(params: LoginParams) {
-    const { username, password, rememberMeFor } = params;
+  execute(params: AddCommandParams) {
+    const { values, thousandSeparators, decimalPlaces } = params;
 
-    if (this.auth.login(username, password, rememberMeFor)) {
-      this.logger.log(`Authenticated. Welcome ${username}`);
+    const result = this.calculator.add(...values);
 
-      if (rememberMeFor) {
-        this.logger.log(`Session will be kept alive for ${rememberMeFor} days`);
-      }
+    const format = (val: number) => val.toLocaleString(undefined, {
+      useGrouping: thousandSeparators,
+      maximumFractionDigits: decimalPlaces
+    });
 
-      return;
-    }
-
-    this.logger.error('Password incorrect');
+    console.log(`${values.map((val) => format(val)).join(' + ')} = ${format(result)}`);
   }
+
 }
+```
+
+Finally, in our entrypoint, lets create our inversify container and pass it to classy-commander.
+
+`./calc.ts`
+```typescript
+import { Container } from 'inversify';
+import * as cli from 'classy-commander';
+
+import './commands/add.ts';
+import './services/calculator';
+
+const container = new Container({ autoBindInjectable: true });
+
+cli
+  .ioc(container)
+  .execute();
 ```
 
 
@@ -339,28 +368,67 @@ export class LoginCommand implements Command<LoginParams> {
 ## Specifying the version
 There are two ways to specify the version of your CLI:
 
-Using the version in your `package.json`
+Using the version in your `package.json`.
 
 ```typescript
-import * as commander from 'classy-commander';
+import * as cli from 'classy-commander';
 
 ...
 
-commander
+cli
   .versionFromPackage(__dirname)
   .execute();
 ```
 
-Or manually
+Or manually.
 
 ```typescript
-import * as commander from 'classy-commander';
+import * as cli from 'classy-commander';
 
 ...
 
-commander
-  .version('1.3.1')
+cli
+  .version('1.2.3')
   .execute();
 ```
 
+## Loading commands from a directory
+Maybe we end up adding a bunch of commands to our CLI app and we don't want to manually import each command in our entry point like below:
 
+```typescript
+import * as cli from 'classy-commander';
+
+import './commands/add.ts';
+import './commands/subtract.ts';
+import './commands/multiply.ts';
+import './commands/divide.ts';
+import './commands/square.ts';
+import './commands/squareRoot.ts';
+import './commands/cube.ts';
+import './commands/cubeRoot.ts';
+
+cli.execute();
+```
+
+We can tell classy-commander to dynamically load all commands from a directory thus reducing our imports.
+
+```typescript
+import * as cli from 'classy-commander';
+import * as path from 'path';
+
+async function run() {
+  await cli
+    .versionFromPackage(__dirname)
+    .ioc(container)
+    .commandsFromDirectory(path.join(__dirname, '/commands'));
+
+  cli.execute();
+}
+
+run().catch(console.error);
+```
+
+## Contributing
+Got an issue or a feature request? [Log it](https://github.com/codeandcats/classy-commander/issues).
+
+[Pull-requests](https://github.com/codeandcats/classy-commander/pulls) are also welcome. 😸

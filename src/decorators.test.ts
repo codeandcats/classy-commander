@@ -60,9 +60,11 @@ describe('src/decorators', () => {
 
       result(LoginCommandParams, 'password');
 
-      expect(addCommandValue).toHaveBeenCalledWith(LoginCommandParams, {
+      expect(addCommandValue).toHaveBeenCalledWith({
         name: 'password',
-        optional: true
+        optional: true,
+        paramsClassPrototype: LoginCommandParams,
+        variadicType: undefined
       });
     });
 
@@ -71,9 +73,37 @@ describe('src/decorators', () => {
 
       result(LoginCommandParams, 'password');
 
-      expect(addCommandValue).toHaveBeenCalledWith(LoginCommandParams, {
+      expect(addCommandValue).toHaveBeenCalledWith({
         name: 'password',
-        optional: false
+        optional: false,
+        paramsClassPrototype: LoginCommandParams,
+        variadicType: undefined
+      });
+    });
+
+    it('should default variadicType to undefined', () => {
+      const result = value({});
+
+      result(LoginCommandParams, 'password');
+
+      expect(addCommandValue).toHaveBeenCalledWith({
+        name: 'password',
+        optional: false,
+        paramsClassPrototype: LoginCommandParams,
+        variadicType: undefined
+      });
+    });
+
+    it('should register the variadic type if specified', () => {
+      const result = value({ variadic: { type: String } });
+
+      result(LoginCommandParams, 'password');
+
+      expect(addCommandValue).toHaveBeenCalledWith({
+        name: 'password',
+        optional: false,
+        paramsClassPrototype: LoginCommandParams,
+        variadicType: String
       });
     });
   });

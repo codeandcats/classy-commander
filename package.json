@@ -7,7 +7,7 @@
     "build": "tsc -p ./tsconfig.core.json",
     "clean": "rimraf ./dist",
     "commit": "commit",
-    "example": "ts-node ./example",
+    "example": "ts-node ./example/calc",
     "lint": "tslint -p ./tsconfig.json",
     "lint:fix": "npm run lint -- --fix",
     "precommit": "npm run lint && npm test && npm run package",
