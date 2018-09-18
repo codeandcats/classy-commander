@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/codeandcats/classy-commander/compare/v3.0.0...v3.1.0) (2018-09-18)
+
+
+### Features
+
+* **core:** add support for variadic values ([340490d](https://github.com/codeandcats/classy-commander/commit/340490d))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/codeandcats/classy-commander/compare/v2.0.1...v3.0.0) (2018-09-16)
 
