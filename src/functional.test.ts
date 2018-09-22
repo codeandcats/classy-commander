@@ -75,12 +75,31 @@ describe('Functional Tests', () => {
     );
   });
 
-  it('should return usage if not supplied any args', async () => {
-    jest.spyOn(commander, 'help').mockImplementation(noop);
+  it('should show usage if not supplied any args', async () => {
+    let modifiedHelp: string | undefined;
+
+    const helpSpy = jest.spyOn(commander, 'help').mockImplementation((cb: (output: string) => string) => {
+      modifiedHelp = cb('some help');
+    });
 
     await cli.execute(['', '']);
 
     expect(commander.help).toHaveBeenCalled();
+
+    expect(modifiedHelp).toEqual('some help\n');
+  });
+
+  it('should show usage if supplied a command that does not exist', () => {
+    jest.spyOn(console, 'error').mockImplementation(noop);
+
+    cli.execute(['', '', 'find-prime-factors', '1290833']);
+
+    // tslint:disable-next-line:no-console
+    expect(console.error).toHaveBeenCalledWith(
+      'Invalid command: %s\nSee --help for a list of available commands.',
+      'find-prime-factors 1290833'
+    );
+    expect(process.exit).toHaveBeenCalled();
   });
 
   describe('when not explicitly providing args', () => {

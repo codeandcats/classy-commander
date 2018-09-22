@@ -54,8 +54,18 @@ export class Commander {
     const args = argv || process.argv;
 
     if (args.length <= 2) {
-      cli.help();
+      cli.help((text) => `${text}\n`);
     }
+
+    cli.on('command:*', () => {
+      console.error();
+      console.error(
+        'Invalid command: %s\nSee --help for a list of available commands.',
+        cli.args.join(' ')
+      );
+      console.error();
+      process.exit(1);
+    });
 
     cli.parse(args);
   }
