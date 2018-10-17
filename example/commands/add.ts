@@ -27,6 +27,7 @@ export class AddCommand implements Command<AddCommandParams> {
 
     const format = (val: number) => val.toLocaleString(undefined, {
       useGrouping: thousandSeparators,
+      minimumFractionDigits: decimalPlaces,
       maximumFractionDigits: decimalPlaces
     });
 

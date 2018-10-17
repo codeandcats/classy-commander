@@ -142,7 +142,7 @@ describe('src/commander', () => {
       });
       expect(action).toBeDefined();
       await expect(action('john', undefined, {})).resolves.toBeUndefined();
-      expect(loginHandler).toHaveBeenCalledWith({ username: 'john' });
+      expect(loginHandler).toHaveBeenCalledWith({ username: 'john', rememberMeFor: 7 });
       // tslint:disable-next-line:no-console
       expect(console.error).toHaveBeenCalledWith(
         expect.stringMatching(/Computer says no/gi)

@@ -63,7 +63,10 @@ function getParams(
   const optionValues = args[paramIndex];
 
   for (const option of options) {
-    params[option.name.toString()] = optionValues[option.name];
+    const value = optionValues[option.name];
+    if (value !== undefined) {
+      params[option.name.toString()] = value;
+    }
   }
 
   return params;
