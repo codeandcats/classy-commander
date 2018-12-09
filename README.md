@@ -3,7 +3,7 @@ A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that l
 
 [![npm version](https://badge.fury.io/js/classy-commander.svg)](https://badge.fury.io/js/classy-commander)
 [![Build Status](https://travis-ci.org/codeandcats/classy-commander.svg?branch=master)](https://travis-ci.org/codeandcats/classy-commander)
-[![Coverage Status](https://coveralls.io/repos/github/codeandcats/classy-commander/badge.svg?branch=master)](https://coveralls.io/github/codeandcats/classy-commander?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/codeandcats/classy-commander/badge.svg?branch=master)](https://coveralls.io/github/codeandcats/classy-commander?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/codeandcats/classy-commander.svg)](https://greenkeeper.io/)
 
 
 ## Features
