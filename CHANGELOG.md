@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.2.10"></a>
+## [3.2.10](https://github.com/codeandcats/classy-commander/compare/v3.2.9...v3.2.10) (2019-01-27)
+
+
+### Bug Fixes
+
+* **docs:** fix logo path ([7707315](https://github.com/codeandcats/classy-commander/commit/7707315))
+
+
+
 <a name="3.2.9"></a>
 ## [3.2.9](https://github.com/codeandcats/classy-commander/compare/v3.2.8...v3.2.9) (2019-01-27)
 
