@@ -1,6 +1,6 @@
 {
   "name": "classy-commander",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "description": "A TypeScript wrapper for Commander that lets you easily declare commands using classes & decorators and provides strongly typed arguments.",
   "main": "index.js",
   "scripts": {

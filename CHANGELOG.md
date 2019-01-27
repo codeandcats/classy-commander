@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.2.9"></a>
+## [3.2.9](https://github.com/codeandcats/classy-commander/compare/v3.2.8...v3.2.9) (2019-01-27)
+
+
+
 <a name="3.2.8"></a>
 ## [3.2.8](https://github.com/codeandcats/classy-commander/compare/v3.2.7...v3.2.8) (2019-01-27)
 
