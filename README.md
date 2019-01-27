@@ -1,6 +1,10 @@
 # classy-commander
 A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides you with strongly typed arguments.
 
+<center>
+	<img src="https://raw.githubusercontent.com/codeandcats/classy-commander/master/logo.png" />
+</center>
+
 [![npm version](https://badge.fury.io/js/classy-commander.svg)](https://badge.fury.io/js/classy-commander)
 [![Build Status](https://travis-ci.org/codeandcats/classy-commander.svg?branch=master)](https://travis-ci.org/codeandcats/classy-commander)
 [![Coverage Status](https://coveralls.io/repos/github/codeandcats/classy-commander/badge.svg?branch=master)](https://coveralls.io/github/codeandcats/classy-commander?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/codeandcats/classy-commander.svg)](https://greenkeeper.io/)
