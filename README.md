@@ -1,9 +1,9 @@
-# classy-commander
-A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides you with strongly typed arguments.
-
-<center>
-	<img src="https://raw.githubusercontent.com/codeandcats/classy-commander/master/img/logo.png" />
-</center>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/codeandcats/classy-commander/master/img/logo.png" />
+  <p align="center">
+    A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides you with strongly typed arguments.
+  <p>
+</p>
 
 [![npm version](https://badge.fury.io/js/classy-commander.svg)](https://badge.fury.io/js/classy-commander)
 [![Build Status](https://travis-ci.org/codeandcats/classy-commander.svg?branch=master)](https://travis-ci.org/codeandcats/classy-commander)
