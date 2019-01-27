@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/codeandcats/classy-commander/master/img/logo.png" />
   <p align="center">
-    A TypeScript wrapper for [Commander](https://github.com/tj/commander.js/) that lets you easily declare commands using classes & decorators and provides you with strongly typed arguments.
+    A TypeScript wrapper for <a href="https://github.com/tj/commander.js/">Commander</a> that lets you easily declare commands using classes & decorators and provides you with strongly typed arguments.
   <p>
 </p>
 
