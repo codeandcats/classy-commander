@@ -58,7 +58,7 @@
     "inversify": "^5.0.1",
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
-    "standard-version": "^4.4.0",
+    "standard-version": "^5.0.0",
     "ts-jest": "^23.1.4",
     "ts-loader": "^5.0.0",
     "ts-node": "^7.0.1",
