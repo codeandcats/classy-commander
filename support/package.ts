@@ -1,15 +1,16 @@
-import * as root from 'app-root-path';
 import * as fs from 'fs';
+import { rootPath } from 'get-root-path';
+import * as path from 'path';
 
-fs.copyFileSync(root.resolve('./package.json'), root.resolve('./dist/package.json'));
+fs.copyFileSync(path.join(rootPath, 'package.json'), path.join(rootPath, 'dist/package.json'));
 
-fs.copyFileSync(root.resolve('./README.md'), root.resolve('./dist/README.md'));
+fs.copyFileSync(path.join(rootPath, 'README.md'), path.join(rootPath, 'dist/README.md'));
 
-const packageObject = JSON.parse(fs.readFileSync('./dist/package.json', 'utf8'));
+const packageObject = JSON.parse(fs.readFileSync('dist/package.json', 'utf8'));
 
 delete packageObject.private;
 delete packageObject.scripts;
 delete packageObject.devDependencies;
 delete packageObject.husky;
 
-fs.writeFileSync(root.resolve('./dist/package.json'), JSON.stringify(packageObject, null, '  '), 'utf8');
+fs.writeFileSync(path.join(rootPath, 'dist/package.json'), JSON.stringify(packageObject, null, '  '), 'utf8');
