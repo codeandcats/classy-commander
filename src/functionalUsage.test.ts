@@ -8,9 +8,15 @@ jest.mock('glob');
 
 describe('Functional Tests', () => {
   describe('when loading commands from directory and theres an error', () => {
-    beforeEach(() => (glob as any as jest.Mock<{}>).mockImplementation((_pattern, callback) => {
-      callback(new Error('Computer says no'));
-    }));
+    beforeEach(
+      () => {
+        (glob as any as jest.Mock<{}>).mockImplementation(
+          (_pattern: string, callback: (err: Error | null, matches?: string[]) => void): any => {
+            callback(new Error('Computer says no'));
+          }
+        );
+      }
+    );
 
     afterEach(() => jest.restoreAllMocks());
 

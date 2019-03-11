@@ -15,7 +15,7 @@ describe('Functional Tests', () => {
 
   beforeEach(async () => {
     jest.spyOn(console, 'error').mockImplementation(noop);
-    jest.spyOn(process, 'exit').mockImplementation(noop);
+    jest.spyOn(process, 'exit').mockImplementation(noop as () => never);
 
     auth = new AuthService(new Logger());
     jest.spyOn(auth, 'login');
@@ -78,9 +78,11 @@ describe('Functional Tests', () => {
   it('should show usage if not supplied any args', async () => {
     let modifiedHelp: string | undefined;
 
-    const helpSpy = jest.spyOn(commander, 'help').mockImplementation((cb: (output: string) => string) => {
+    const helpCallbackMock = ((cb: (output: string) => string) => {
       modifiedHelp = cb('some help');
-    });
+    }) as unknown as ((cb?: ((output: string) => string) | undefined) => never);
+
+    jest.spyOn(commander, 'help').mockImplementation(helpCallbackMock);
 
     await cli.execute(['', '']);
 

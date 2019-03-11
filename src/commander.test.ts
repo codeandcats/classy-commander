@@ -1,4 +1,5 @@
 import * as commander from 'commander';
+import { partialOf } from 'jest-helpers';
 import { getCommandUsage, getIocContainer, registerCommand, setIocContainer } from './commander';
 import { option, value } from './decorators';
 import { Command, CommandDefinition, IocContainer } from './types';
@@ -57,7 +58,7 @@ describe('src/commander', () => {
 
   beforeEach(() => {
     loginHandler = jest.fn();
-    jest.spyOn(process, 'exit').mockImplementation(noop);
+    jest.spyOn(process, 'exit').mockImplementation(noop as () => never);
   });
 
   afterEach(() => {
@@ -76,7 +77,7 @@ describe('src/commander', () => {
 
   describe('registerCommand', () => {
     let command: CommandDefinition<any>;
-    let commanderCommandMock: Partial<ReturnType<typeof commander['command']>>;
+    let commanderCommandMock: ReturnType<typeof commander['command']>;
     let action: (...args: any[]) => void | undefined;
 
     beforeEach(() => {
@@ -87,11 +88,11 @@ describe('src/commander', () => {
         type: LoginCommand
       };
 
-      commanderCommandMock = {
+      commanderCommandMock = partialOf<ReturnType<typeof commander['command']>>({
         action: jest.fn().mockImplementation((a) => action = a),
         description: jest.fn(),
         option: jest.fn()
-      };
+      });
 
       jest.spyOn(commander, 'command').mockReturnValue(commanderCommandMock);
 
@@ -119,13 +120,13 @@ describe('src/commander', () => {
         undefined
       );
 
-      const coerceRememberMeFor = (commanderCommandMock.option as jest.Mock<{}>).mock.calls[0][2];
+      const coerceRememberMeFor = (commanderCommandMock.option as unknown as jest.Mock<{}>).mock.calls[0][2];
       expect(coerceRememberMeFor('123')).toEqual(123);
 
-      const coerceMfaCode = (commanderCommandMock.option as jest.Mock<{}>).mock.calls[1][2];
+      const coerceMfaCode = (commanderCommandMock.option as unknown as jest.Mock<{}>).mock.calls[1][2];
       expect(coerceMfaCode('123')).toEqual('123');
 
-      const coercePin = (commanderCommandMock.option as jest.Mock<{}>).mock.calls[2][2];
+      const coercePin = (commanderCommandMock.option as unknown as jest.Mock<{}>).mock.calls[2][2];
       expect(coercePin('123')).toEqual(123);
     });
 
@@ -137,7 +138,7 @@ describe('src/commander', () => {
 
     it('should register an action that executes the command and handles errors', async () => {
       jest.spyOn(console, 'error').mockImplementation(noop);
-      (loginHandler as jest.Mock<{}>).mockImplementation(() => {
+      (loginHandler as unknown as jest.Mock<{}>).mockImplementation(() => {
         throw new Error('Computer says no');
       });
       expect(action).toBeDefined();
