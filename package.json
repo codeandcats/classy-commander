@@ -17,6 +17,7 @@
     "prerelease": "npm run build",
     "release": "git checkout master && git pull origin master && standard-version && ts-node ./support/updatePackageVersion.ts",
     "ship": "git push --follow-tags origin master && cd ./dist && npm publish",
+    "pretest": "npm run build",
     "test": "jest"
   },
   "private": true,
@@ -39,7 +40,7 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS --config ./commitlint.config.json",
       "pre-commit": "npm run check"
     }
   },
