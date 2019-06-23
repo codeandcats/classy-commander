@@ -30,14 +30,10 @@ export interface Command<TParams> {
   execute(params: TParams): Promise<void> | void;
 }
 
-export interface CommandParamsClass<T> {
-  new(): T;
-}
+export type CommandParamsClass<T> = new () => T;
 
-export interface CommandClass<TParams> {
-  new(...args: any[]): Command<TParams>;
-}
+export type CommandClass<TParams> = new (...args: any[]) => Command<TParams>;
 
 export interface IocContainer {
-  get: <T>(Class: { new(...args: any[]): T }) => T;
+  get: <T>(Class: new (...args: any[]) => T) => T;
 }

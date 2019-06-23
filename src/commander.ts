@@ -73,14 +73,14 @@ function getParams(
 }
 
 function instantiateCommand(command: CommandDefinition<any>) {
-  const constructor = command.type as { new(...args: any[]): Command<any> };
+  const constructor = command.type;
   const instance = iocContainer ? iocContainer.get(constructor) : new constructor();
   return instance;
 }
 
 function registerCommandOption(
   cliCommand: cli.Command,
-  paramsClass: { new(...args: any[]): any; },
+  paramsClass: new (...args: any[]) => any,
   option: CommandOptionDefinition
 ) {
   const optionUsage = getOptionUsage(option);
