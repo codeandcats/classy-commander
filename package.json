@@ -72,7 +72,7 @@
     "commander": "^2.20.0",
     "fs-extra": "^8.0.1",
     "glob": "^7.1.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "reflect-metadata": "^0.1.13"
   }
 }
