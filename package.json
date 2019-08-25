@@ -70,7 +70,7 @@
     "boolean": "^1.0.0",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
-    "fs-extra": "^8.0.1",
+    "fs-extra": "^8.1.0",
     "glob": "^7.1.4",
     "lodash": "^4.17.13",
     "reflect-metadata": "^0.1.13"
