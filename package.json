@@ -58,7 +58,7 @@
     "inversify": "^5.0.1",
     "jest": "^24.9.0",
     "jest-helpers": "^3.0.1",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "standard-version": "^7.0.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
