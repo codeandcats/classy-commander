@@ -45,7 +45,7 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "^8.2.0",
+    "@commitlint/cli": "^8.3.4",
     "@commitlint/config-conventional": "^8.2.0",
     "@commitlint/prompt-cli": "^8.3.4",
     "@types/fs-extra": "^8.0.1",
