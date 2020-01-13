@@ -54,7 +54,7 @@
     "@types/lodash": "^4.14.149",
     "coveralls": "^3.0.9",
     "get-root-path": "^2.0.2",
-    "husky": "^3.1.0",
+    "husky": "^4.0.7",
     "inversify": "^5.0.1",
     "jest": "^24.9.0",
     "jest-helpers": "^3.1.0",
