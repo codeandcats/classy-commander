@@ -50,7 +50,7 @@
     "@commitlint/prompt-cli": "^8.3.5",
     "@types/fs-extra": "^8.0.1",
     "@types/glob": "^7.1.1",
-    "@types/jest": "^24.9.1",
+    "@types/jest": "^25.1.0",
     "@types/lodash": "^4.14.149",
     "coveralls": "^3.0.9",
     "get-root-path": "^2.0.2",
