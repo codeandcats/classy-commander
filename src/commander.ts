@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk = require('chalk');
 import * as cli from 'commander';
 import * as _ from 'lodash';
 import { coerceValue } from './coercion';
@@ -8,7 +8,7 @@ import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, Comm
 
 let iocContainer: IocContainer | undefined;
 
-const commandDefinitions: Array<CommandDefinition<any>> = [];
+const commandDefinitions: CommandDefinition<any>[] = [];
 
 export function setIocContainer(container: IocContainer | undefined) {
   iocContainer = container;

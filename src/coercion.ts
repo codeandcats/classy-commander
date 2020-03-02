@@ -1,4 +1,4 @@
-import * as parseBoolean from 'boolean';
+import { boolean as parseBoolean } from 'boolean';
 
 export function coerceValue(
   value: string | string[] | undefined,
