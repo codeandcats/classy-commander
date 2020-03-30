@@ -56,7 +56,7 @@
     "get-root-path": "2.0.2",
     "husky": "4.2.3",
     "inversify": "5.0.1",
-    "jest": "25.2.3",
+    "jest": "25.2.4",
     "jest-helpers": "3.1.1",
     "rimraf": "3.0.2",
     "standard-version": "7.1.0",
