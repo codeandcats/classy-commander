@@ -138,7 +138,7 @@ Running `ts-node ./calc add 1 2 3` now outputs:
 
 Adding two numbers still works. `ts-node ./calc add 1 2` outputs:
 ```
-1 + 2 = 6
+1 + 2 = 3
 ```
 
 
