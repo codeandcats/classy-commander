@@ -59,7 +59,7 @@
     "jest": "25.5.4",
     "jest-helpers": "3.1.1",
     "rimraf": "3.0.2",
-    "standard-version": "7.1.0",
+    "standard-version": "8.0.1",
     "ts-jest": "25.5.1",
     "ts-loader": "6.2.2",
     "ts-node": "8.10.2",
