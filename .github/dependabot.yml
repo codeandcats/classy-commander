@@ -1,0 +1,44 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "17:00"
+    timezone: Australia/Melbourne
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/fs-extra"
+    versions:
+    - 9.0.10
+    - 9.0.6
+    - 9.0.7
+    - 9.0.8
+    - 9.0.9
+  - dependency-name: "@types/jest"
+    versions:
+    - 26.0.20
+    - 26.0.21
+    - 26.0.22
+  - dependency-name: "@commitlint/cli"
+    versions:
+    - 11.0.0
+    - 12.0.0
+    - 12.0.1
+  - dependency-name: "@commitlint/prompt-cli"
+    versions:
+    - 11.0.0
+    - 12.0.0
+    - 12.0.1
+  - dependency-name: "@commitlint/config-conventional"
+    versions:
+    - 11.0.0
+    - 12.0.0
+    - 12.0.1
+  - dependency-name: commander
+    versions:
+    - 7.0.0
+    - 7.1.0
+  - dependency-name: chalk
+    versions:
+    - 4.1.0
