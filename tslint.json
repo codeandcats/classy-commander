@@ -18,6 +18,7 @@
     "member-access": false,
     "no-floating-promises": true,
     "no-increment-decrement": false,
+    "no-shadowed-variable": false,
     "object-literal-sort-keys": false,
     "object-shorthand-properties-first": false,
     "semicolon": [
