@@ -12,8 +12,8 @@ async function run() {
     .ioc(container)
     .commandsFromDirectory(path.join(__dirname, '/commands'));
 
-  cli.execute();
+  await cli.execute();
 }
 
-// tslint:disable-next-line:no-console
-run().catch(console.error);
+// tslint:disable-next-line:no-empty
+run().catch(() => {});

@@ -6,7 +6,10 @@ export class AuthService {
   constructor(private logger: Logger) {
   }
 
-  login(username: string, password: string | undefined, keepAliveDurationDays: number) {
+  async login(username: string, password: string | undefined, keepAliveDurationDays: number) {
+    // Artificial delay to simulate async operation
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     if (password === 'swordfish' || (username === 'guest' && !password)) {
       this.logger.log(`User authenticated`);
       return;

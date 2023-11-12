@@ -19,7 +19,7 @@ export class LoginCommand implements Command<LoginCommandParams> {
   constructor(private auth: AuthService) {
   }
 
-  execute(params: LoginCommandParams) {
-    this.auth.login(params.username, params.password, params.rememberMeFor);
+  async execute(params: LoginCommandParams) {
+    await this.auth.login(params.username, params.password, params.rememberMeFor);
   }
 }

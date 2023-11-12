@@ -1,4 +1,3 @@
-import chalk = require('chalk');
 import * as cli from 'commander';
 import * as _ from 'lodash';
 import { coerceValue } from './coercion';
@@ -84,7 +83,7 @@ function registerCommandOption(
   option: CommandOptionDefinition
 ) {
   const optionUsage = getOptionUsage(option);
-  const coercedValue = !option.valueName ? undefined : ((value: string) => {
+  const coercedValue = ((value: string) => {
     if (option.valueName && option.type === Number) {
       return +value;
     } else {
@@ -97,7 +96,7 @@ function registerCommandOption(
 
   cliCommand.option(
     optionUsage,
-    option.description,
+    option.description ?? '',
     coercedValue,
     defaultValue
   );
@@ -107,7 +106,7 @@ export function registerCommand(commandDefinition: CommandDefinition<any>) {
   commandDefinitions.push(commandDefinition);
 
   const usage = getCommandDefinitionUsage(commandDefinition);
-  const cliCommand = cli.command(usage);
+  const cliCommand = cli.program.command(usage);
 
   if (commandDefinition.description) {
     cliCommand.description(commandDefinition.description);
@@ -119,18 +118,9 @@ export function registerCommand(commandDefinition: CommandDefinition<any>) {
   }
 
   cliCommand.action(async (...args: any[]) => {
-    try {
-      const commandInstance = instantiateCommand(commandDefinition);
-      const params = getParams(commandDefinition, args);
-      await commandInstance.execute(params);
-    } catch (err) {
-      // tslint:disable:no-console
-      console.error();
-      console.error(chalk.red(errorToString(err)));
-      console.error();
-      process.exit(1);
-      // tslint:enable:no-console
-    }
+    const commandInstance = instantiateCommand(commandDefinition);
+    const params = getParams(commandDefinition, args);
+    await commandInstance.execute(params);
   });
 }
 

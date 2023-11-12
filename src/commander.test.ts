@@ -4,6 +4,8 @@ import { getCommandUsage, getIocContainer, registerCommand, setIocContainer } fr
 import { option, value } from './decorators';
 import { Command, CommandDefinition, IocContainer } from './types';
 
+type CommanderCommand = typeof commander.program.command;
+
 jest.mock('commander');
 
 const noop = () => {
@@ -77,7 +79,7 @@ describe('src/commander', () => {
 
   describe('registerCommand', () => {
     let command: CommandDefinition<any>;
-    let commanderCommandMock: ReturnType<typeof commander['command']>;
+    let commanderCommandMock: ReturnType<typeof commander.program.command>;
     let action: (...args: any[]) => void | undefined;
 
     beforeEach(() => {
@@ -88,19 +90,19 @@ describe('src/commander', () => {
         type: LoginCommand
       };
 
-      commanderCommandMock = partialOf<ReturnType<typeof commander['command']>>({
+      commanderCommandMock = partialOf<ReturnType<CommanderCommand>>({
         action: jest.fn().mockImplementation((a) => action = a),
         description: jest.fn(),
         option: jest.fn()
       });
 
-      jest.spyOn(commander, 'command').mockReturnValue(commanderCommandMock);
+      jest.spyOn(commander.program, 'command').mockReturnValue(commanderCommandMock);
 
       registerCommand(command);
     });
 
     it('should register a command with commander', () => {
-      expect(commander.command).toHaveBeenCalledWith('login <username> [password]');
+      expect(commander.program.command).toHaveBeenCalledWith('login <username> [password]');
 
       expect(commanderCommandMock.description).toHaveBeenCalledWith('Logs user in');
 
@@ -115,7 +117,7 @@ describe('src/commander', () => {
 
       expect(commanderCommandMock.option).toHaveBeenCalledWith(
         '--mfaCode <code>',
-        undefined,
+        '',
         expect.any(Function),
         undefined
       );
@@ -136,19 +138,14 @@ describe('src/commander', () => {
       expect(loginHandler).toHaveBeenCalledWith({ username: 'john', password: undefined, pin: 8008, rememberMeFor: 3, mfaCode: 'abcdef' });
     });
 
-    it('should register an action that executes the command and handles errors', async () => {
+    it('should register an action that executes the command and bubbles errors up', async () => {
       jest.spyOn(console, 'error').mockImplementation(noop);
       (loginHandler as unknown as jest.Mock<{}>).mockImplementation(() => {
         throw new Error('Computer says no');
       });
       expect(action).toBeDefined();
-      await expect(action('john', undefined, {})).resolves.toBeUndefined();
+      await expect(action('john', undefined, {})).rejects.toEqual(new Error('Computer says no'));
       expect(loginHandler).toHaveBeenCalledWith({ username: 'john', rememberMeFor: 7 });
-      // tslint:disable-next-line:no-console
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringMatching(/Computer says no/gi)
-      );
-      expect(process.exit).toHaveBeenCalledWith(1);
     });
   });
 

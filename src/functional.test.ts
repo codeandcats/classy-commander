@@ -6,18 +6,20 @@ import * as cli from './index';
 import { AuthService } from './testFixtures/services/auth';
 import { Logger } from './testFixtures/services/logger';
 
-const noop = () => {
-  //
-};
-
 describe('Functional Tests', () => {
   let auth: AuthService;
+  let logger: Logger;
 
   beforeEach(async () => {
-    jest.spyOn(console, 'error').mockImplementation(noop);
-    jest.spyOn(process, 'exit').mockImplementation(noop as () => never);
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(process, 'exit').mockImplementation();
+    jest.spyOn(commander.program, 'outputHelp').mockImplementation();
 
-    auth = new AuthService(new Logger());
+    logger = new Logger();
+    jest.spyOn(logger, 'log');
+    jest.spyOn(logger, 'error');
+
+    auth = new AuthService(logger);
     jest.spyOn(auth, 'login');
     jest.spyOn(auth, 'logout');
 
@@ -29,12 +31,24 @@ describe('Functional Tests', () => {
     await cli.commandsFromDirectory(path.join(__dirname, 'testFixtures', 'commands'));
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => {
+    process.exitCode = 0;
+    jest.restoreAllMocks();
+  });
 
   it('should execute a command', async () => {
-    await cli.execute(['', '', 'login', 'john', 'swordfish', '--rememberMeFor', '30']);
+    let resolved = false;
+
+    const promise = cli
+      .execute(['', '', 'login', 'john', 'swordfish', '--rememberMeFor', '30'])
+      .then(() => resolved = true);
 
     expect(auth.login).toHaveBeenCalledWith('john', 'swordfish', 30);
+    expect(resolved).toBe(false);
+
+    await promise;
+
+    expect(resolved).toBe(true);
   });
 
   it('should execute another command', async () => {
@@ -76,32 +90,22 @@ describe('Functional Tests', () => {
   });
 
   it('should show usage if not supplied any args', async () => {
-    let modifiedHelp: string | undefined;
-
-    const helpCallbackMock = ((cb: (output: string) => string) => {
-      modifiedHelp = cb('some help');
-    }) as unknown as ((cb?: ((output: string) => string) | undefined) => never);
-
-    jest.spyOn(commander, 'help').mockImplementation(helpCallbackMock);
+    jest.spyOn(commander.program, 'outputHelp').mockImplementation();
 
     await cli.execute(['', '']);
 
-    expect(commander.help).toHaveBeenCalled();
-
-    expect(modifiedHelp).toEqual('some help\n');
+    expect(commander.program.outputHelp).toHaveBeenCalled();
   });
 
-  it('should show usage if supplied a command that does not exist', () => {
-    jest.spyOn(console, 'error').mockImplementation(noop);
-
-    cli.execute(['', '', 'find-prime-factors', '1290833']);
+  it('should show usage if supplied a command that does not exist', async () => {
+    await cli.execute(['', '', 'find-prime-factors', '1290833']);
 
     // tslint:disable-next-line:no-console
     expect(console.error).toHaveBeenCalledWith(
       'Invalid command: %s\nSee --help for a list of available commands.',
       'find-prime-factors 1290833'
     );
-    expect(process.exit).toHaveBeenCalled();
+    expect(process.exitCode).toBe(1);
   });
 
   describe('when not explicitly providing args', () => {
@@ -122,11 +126,11 @@ describe('Functional Tests', () => {
     });
   });
 
-  it('should log errors and exit', async () => {
-    await cli.execute(['', '', 'admin']);
+  it('should log errors and set exit code', async () => {
+    await expect(() => cli.execute(['', '', 'admin'])).rejects.toThrow('Not authorised');
 
     // tslint:disable-next-line:no-console
     expect(console.error).toHaveBeenCalledWith(expect.stringMatching(/Not authorised/i));
-    expect(process.exit).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toBe(1);
   });
 });

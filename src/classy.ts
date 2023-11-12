@@ -1,4 +1,5 @@
 // tslint:disable:no-console
+import chalk = require('chalk');
 import * as cli from 'commander';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
@@ -46,28 +47,41 @@ export class Commander {
     return this;
   }
 
-  public execute(argv?: string[]) {
+  public async execute(argv?: string[]) {
     if (this._version) {
-      cli.version(this._version);
+      cli.program.version(this._version);
     }
 
     const args = argv || process.argv;
 
+    cli.program.addHelpText('after', '\n');
+
     if (args.length <= 2) {
-      cli.help((text) => `${text}\n`);
+      cli.program.outputHelp();
+      return;
     }
 
-    cli.on('command:*', () => {
+    cli.program.on('command:*', () => {
       console.error();
       console.error(
         'Invalid command: %s\nSee --help for a list of available commands.',
-        cli.args.join(' ')
+        cli.program.args.join(' ')
       );
       console.error();
-      process.exit(1);
+      process.exitCode = 1;
     });
 
-    cli.parse(args);
+    try {
+      await cli.program.parseAsync(args);
+    } catch (err: any) {
+      process.exitCode = 1;
+      console.error();
+      // istanbul ignore next
+      const errorMessage = err.message ?? err;
+      console.error(chalk.red(errorMessage));
+      console.error();
+      throw err;
+    }
   }
 
   private getPackageVersion(packageFileName: string): string | undefined {
