@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/codeandcats/classy-commander/compare/v3.2.16...v4.0.0) (2023-11-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* The execute function is now async and will resolve/reject
+once the command finishes executing or errors.
+
+This allows for performing global cleanup in your
+application's entry point.
+
+### Features
+
+* execute is now async ([dcf648c](https://github.com/codeandcats/classy-commander/commit/dcf648cff5be8fe628cf022257d9dc7d5ebdeae8))
+
+
+### Bug Fixes
+
+* tsconfig for example app had incorrect files ([5390d29](https://github.com/codeandcats/classy-commander/commit/5390d29bf97d3159860ed8ec0122fc5b860d4d23))
+
 ### [3.2.17](https://github.com/codeandcats/classy-commander/compare/v3.2.16...v3.2.17) (2020-09-15)
 
 ### [3.2.16](https://github.com/codeandcats/classy-commander/compare/v3.2.15...v3.2.16) (2020-03-02)
