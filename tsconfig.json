@@ -10,7 +10,8 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "target": "ES2015"
   },
   "exclude": [
     "./node_modules"

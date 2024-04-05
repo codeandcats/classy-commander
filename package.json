@@ -51,7 +51,6 @@
     "@types/fs-extra": "8.1.0",
     "@types/glob": "7.1.2",
     "@types/jest": "^29.5.8",
-    "@types/lodash": "^4.14.201",
     "coveralls": "3.1.0",
     "get-root-path": "2.0.2",
     "husky": "4.2.5",
@@ -72,7 +71,6 @@
     "commander": "^11.1.0",
     "fs-extra": "8.1.0",
     "glob": "7.1.6",
-    "lodash": "^4.17.21",
     "reflect-metadata": "0.1.13"
   }
 }

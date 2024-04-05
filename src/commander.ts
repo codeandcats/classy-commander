@@ -1,5 +1,4 @@
 import * as cli from 'commander';
-import * as _ from 'lodash';
 import { coerceValue } from './coercion';
 import { errorToString } from './errors';
 import { getCommandOptions, getCommandValues } from './metadata';
@@ -132,16 +131,14 @@ function valueDefinitionToUsageString(value: CommandValueDefinition) {
 
 export function getCommandDefinitionUsage(commandDefinition: CommandDefinition<any>) {
   const values = getCommandValues(commandDefinition.paramsClass.prototype);
-  const valuesUsage = _
-    .chain(values)
+  const valuesUsage = values
     .map((value, index) => ({
       value,
       index
     }))
     .sort((a, b) => a.value.variadic ? 1 : b.value.variadic ? -1 : a.index - b.index)
     .map((valueAndIndex) => valueDefinitionToUsageString(valueAndIndex.value))
-    .join(' ')
-    .value();
+    .join(' ');
   const usage = `${commandDefinition.name} ${valuesUsage}`.trim();
   return usage;
 }

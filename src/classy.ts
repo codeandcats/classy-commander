@@ -3,7 +3,6 @@ import chalk = require('chalk');
 import * as cli from 'commander';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { setIocContainer } from './commander';
 import { getUniqueModuleNames } from './modules';
