@@ -1,8 +1,7 @@
 import * as cli from 'commander';
 import { coerceValue } from './coercion';
-import { errorToString } from './errors';
 import { getCommandOptions, getCommandValues } from './metadata';
-import { Command, CommandClass, CommandDefinition, CommandOptionDefinition, CommandValueDefinition, IocContainer } from './types';
+import { CommandClass, CommandDefinition, CommandOptionDefinition, CommandValueDefinition, IocContainer } from './types';
 
 let iocContainer: IocContainer | undefined;
 
