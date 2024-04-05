@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 function isFileNameTypeScriptOrJavaScript(fileName: string) {
   return /.\.(ts|js)$/i.test(fileName);
 }
@@ -13,13 +11,13 @@ function removeFileExtension(fileName: string) {
 }
 
 export function getUniqueModuleNames(fileNames: string[]) {
-  const moduleNames = _
-    .chain(fileNames)
-    .filter((fileName) => !isFileNameDeclarationFile(fileName))
-    .filter(isFileNameTypeScriptOrJavaScript)
-    .map(removeFileExtension)
-    .uniq()
-    .value();
-
+  const moduleNames = [
+    ...new Set(
+      fileNames
+        .filter((filename) => !isFileNameDeclarationFile(filename))
+        .filter(isFileNameTypeScriptOrJavaScript)
+        .map(removeFileExtension)
+    ),
+  ];
   return moduleNames;
 }
