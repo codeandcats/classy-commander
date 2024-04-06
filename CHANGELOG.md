@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/codeandcats/classy-commander/compare/v4.0.0...v4.1.0) (2024-04-06)
+
+
+### Features
+
+* remove lodash dependency ([2451321](https://github.com/codeandcats/classy-commander/commit/245132128b37ff1b3f9518a7dda0ed063a5a3265))
+
 ## [4.0.0](https://github.com/codeandcats/classy-commander/compare/v3.2.16...v4.0.0) (2023-11-12)
 
 
